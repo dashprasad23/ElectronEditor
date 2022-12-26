@@ -1,8 +1,9 @@
 const path = require('path');
 
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, Menu} = require('electron');
 const isDev = require('electron-is-dev');
-
+require("dotenv").config();
+const { menu } = require("./../main/Menu");
 function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
@@ -16,6 +17,7 @@ function createWindow() {
 
   // and load the index.html of the app.
   // win.loadFile("index.html");
+  Menu.setApplicationMenu(menu);
   win.loadURL(
     isDev
       ? 'http://localhost:3000'
