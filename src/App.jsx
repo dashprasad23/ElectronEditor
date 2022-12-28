@@ -10,7 +10,7 @@ const App = () => {
 
   return (
     <Resize handleWidth="5px" handleColor="#777">
-      <ResizeHorizon width="200px">
+      <ResizeHorizon width="30vw">
        <Sidebar collapsed={collapsed}/>
       </ResizeHorizon>
       <ResizeHorizon width="200px" minWidth="150px">

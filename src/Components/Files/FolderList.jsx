@@ -14,12 +14,13 @@ const FolderList = () => {
   });
 
   window.main.ipcRenderer.on('openDirReply', (event, resp) => {
-
     const files = [...treeData];
-    console.log(updateChildren(resp.parentId,resp.data,files));
+    setTreeData(updateChildren(resp.parentId,resp.data,files));
   });
 
   const onSelect = (keys, info) => {
+    const selectedFileData = {title:info.node.key,path: info.node.path,key: info.node.key};
+    window.main.ipcRenderer.send('store', {key:'SELECTED_ITEM', data: selectedFileData})
     
   };
   const onExpand = async (keys, info) => {
@@ -30,13 +31,13 @@ const FolderList = () => {
    }};
 
   const updateChildren = (parentId, children, filesData) => {
-    
     for(let i=0; i<filesData.length; i++) {
       if(filesData[i].key === parentId) {
         filesData[i].children = children
         return filesData;
       } else if(parentId.startsWith(filesData[i].key)){
-         return updateChildren(parentId, children, filesData[i].children);
+         filesData[i].children = updateChildren(parentId, children, filesData[i].children);
+         return filesData;
         }
     }
  
