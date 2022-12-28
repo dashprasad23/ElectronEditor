@@ -11,6 +11,9 @@ const getData = (key) => {
     return store.get(key)
 }
 
+
+
+
 const deleteData  = (key) => {
     return store.delete(key);
 }

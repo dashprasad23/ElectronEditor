@@ -1,5 +1,12 @@
-const { Menu } = require("electron");
+const { Menu, ipcMain} = require("electron");
 const { openFileModel } = require("./filesystem");
+
+let selectedFileData;
+ipcMain.on('fileSelected', (event,data) => {
+  menu.getMenuItemById('edit:edit').enabled = true;
+  menu.getMenuItemById('edit:delete').enabled = true;
+  selectedFileData = data.data;
+})
 let menu = Menu.buildFromTemplate([
   {
     label: "",
@@ -47,13 +54,20 @@ let menu = Menu.buildFromTemplate([
     label: "Edit",
     submenu: [
       {
+        id: 'edit:edit',
         label: "Edit",
         click: () =>{
           
-        }
+        },
+        enabled: false
       },
       {
+        id: 'edit:delete',
         label: "Delete",
+        click: () => {
+
+        },
+        enabled: false
       },
       {
         type: "separator",

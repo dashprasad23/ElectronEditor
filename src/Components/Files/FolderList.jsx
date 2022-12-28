@@ -19,8 +19,9 @@ const FolderList = () => {
   });
 
   const onSelect = (keys, info) => {
+    console.log(info);
     const selectedFileData = {title:info.node.key,path: info.node.path,key: info.node.key};
-    window.main.ipcRenderer.send('store', {key:'SELECTED_ITEM', data: selectedFileData})
+    window.main.ipcRenderer.send('fileSelected', {data: selectedFileData})
     
   };
   const onExpand = async (keys, info) => {
