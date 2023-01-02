@@ -4,6 +4,9 @@
   "private": true,
   "main": "public/electron.js",
   "dependencies": {
+    "@codemirror/lang-javascript": "^6.1.2",
+    "@codemirror/language": "^6.3.2",
+    "@reduxjs/toolkit": "^1.9.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -12,10 +15,15 @@
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
     "electron-store": "^8.1.0",
+    "i": "^0.3.7",
+    "npm": "^9.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-redux": "^8.0.5",
     "react-resize-layout": "^0.2.3",
     "react-scripts": "5.0.1",
+    "redux": "^4.2.0",
+    "redux-thunk": "^2.4.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

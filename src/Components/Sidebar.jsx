@@ -1,6 +1,5 @@
 import { Layout, Tabs} from 'antd';
 import {TabList} from '../Constants/SidebarTabs'
-import './Sidebar.scss';
 import classes from './Sidebar.module.scss';
 const { Sider } = Layout;
 
@@ -14,7 +13,6 @@ const Sidebar = (props) => {
         defaultActiveKey="1"
         type="card"
         size="small"
-        tabBarStyle={{background:'#001529'}}
         items={TabList.map((tab, i) => {
           const id = String(i + 1);
           return {

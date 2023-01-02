@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { Tree } from 'antd';
 
 import './FolderList.scss';
+import {useDispatch} from "react-redux";
+import {readFileData} from "../../State/Editor";
 
 const { DirectoryTree } = Tree;
 
 const FolderList = () => {
-
+  const dispatch = useDispatch();
   const [treeData, setTreeData] = useState([]);
 
   window.main.ipcRenderer.on("files", (event, resp) => {
@@ -19,11 +21,18 @@ const FolderList = () => {
   });
 
   const onSelect = (keys, info) => {
-    console.log(info);
     const selectedFileData = {title:info.node.key,path: info.node.path,key: info.node.key};
-    window.main.ipcRenderer.send('fileSelected', {data: selectedFileData})
+    window.main.ipcRenderer.send('fileSelected', {data: selectedFileData});
+    if(info.node.isLeaf) {
+      openFileHandler({key:info.node.key, title: info.node.title, path: info.node.path});
+    }
     
   };
+
+  const openFileHandler = (fileData) => {
+     console.log(fileData);
+     dispatch(readFileData(fileData));
+  }
   const onExpand = async (keys, info) => {
     const id = info.node.key;
     const dirPath = info.node.path;

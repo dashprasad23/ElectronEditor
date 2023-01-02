@@ -5,6 +5,7 @@ const isDev = require('electron-is-dev');
 require("dotenv").config();
 const { menu } = require("./../main/Menu");
 const { saveData } = require("./../main/dataStore");
+const {listenKeyBoardEvent} = require("../main/keyBoardEvent");
 
 ipcMain.on('store', (event,data) => {
   saveData(data.key,data.data)
@@ -30,6 +31,7 @@ function createWindow() {
       ? 'http://localhost:3000'
       : `file://${path.join(__dirname, '../build/index.html')}`
   );
+  listenKeyBoardEvent();
   // Open the DevTools.
   if (isDev) {
     win.webContents.openDevTools({ mode: 'detach' });
