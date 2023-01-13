@@ -1,6 +1,6 @@
 const {BrowserWindow} = require('electron');
 const getMainWindow = () => {
-    const ID = 1;
+    const ID = 2;
     return BrowserWindow.fromId(ID)
   }
 

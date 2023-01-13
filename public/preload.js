@@ -1,10 +1,12 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const fs = require('fs');
-const path = require('path')
+const path = require('path');
+const {globalShortcut} = require('electron');
 
 contextBridge.exposeInMainWorld('main', {
   fs: {...fs},
   fsPromis: {...fs.promises},
+  globalShortcut,
   ipcRenderer: {
     ...ipcRenderer,
     on: ipcRenderer.on.bind(ipcRenderer),

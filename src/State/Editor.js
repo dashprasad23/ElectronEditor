@@ -52,6 +52,10 @@ const editorSlice = createSlice({
         },
         setActiveKey(state, action) {
             state.activeKey = action.payload;
+        },
+        clear(state) {
+            
+           state = initialEditorState;
         }
     }
 });

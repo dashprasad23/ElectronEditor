@@ -8,7 +8,7 @@ ipcMain.on("openDir", async (event, data) => {
   let path = data.path;
   let parentId = data.parentId
   const fileData = await readDir(path, parentId);
-  event.reply("openDirReply", {data: fileData, parentId})
+  event.reply("openDirReply", {data: fileData, parentId, path})
 });
 
 const openFileModel = async () => {

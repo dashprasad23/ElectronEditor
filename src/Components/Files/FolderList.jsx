@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Tree } from 'antd';
-
+import { FileOutlined, GithubOutlined } from "@ant-design/icons";
 import './FolderList.scss';
 import {useDispatch} from "react-redux";
-import {readFileData} from "../../State/Editor";
+import {editorAction, readFileData} from "../../State/Editor";
 
 const { DirectoryTree } = Tree;
 
@@ -12,12 +12,17 @@ const FolderList = () => {
   const [treeData, setTreeData] = useState([]);
 
   window.main.ipcRenderer.on("files", (event, resp) => {
-    setTreeData(resp.data);
+    dispatch(editorAction.clear());
+    if(resp.data) {
+      setTreeData(resp.data);
+    }
+    
   });
 
   window.main.ipcRenderer.on('openDirReply', (event, resp) => {
-    const files = [...treeData];
-    setTreeData(updateChildren(resp.parentId,resp.data,files));
+    if(treeData) {
+      setTreeData(updateChildren(resp.path,resp.data,[...treeData]));
+    }
   });
 
   const onSelect = (keys, info) => {
@@ -30,7 +35,6 @@ const FolderList = () => {
   };
 
   const openFileHandler = (fileData) => {
-     console.log(fileData);
      dispatch(readFileData(fileData));
   }
   const onExpand = async (keys, info) => {
@@ -42,10 +46,10 @@ const FolderList = () => {
 
   const updateChildren = (parentId, children, filesData) => {
     for(let i=0; i<filesData.length; i++) {
-      if(filesData[i].key === parentId) {
+      if(filesData[i].path === parentId) {
         filesData[i].children = children
         return filesData;
-      } else if(parentId.startsWith(filesData[i].key)){
+      } else if(parentId.startsWith(filesData[i].path)){
          filesData[i].children = updateChildren(parentId, children, filesData[i].children);
          return filesData;
         }
@@ -64,6 +68,10 @@ const FolderList = () => {
       onSelect={onSelect}
       onExpand={onExpand}
       treeData={treeData}
+      // icon={(data) => {
+      //   console.log(data)
+      //   return !data.data.children && <GithubOutlined/>
+      // }}
     />
   );
 };

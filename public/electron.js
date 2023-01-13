@@ -25,6 +25,8 @@ function createWindow() {
 
   // and load the index.html of the app.
   // win.loadFile("index.html");
+
+
   Menu.setApplicationMenu(menu);
   win.loadURL(
     isDev
@@ -38,7 +40,31 @@ function createWindow() {
   }
 }
 
-app.whenReady().then(createWindow);
+
+const showSplashScreen = () => {
+  var splash = new BrowserWindow({
+    width: 500, 
+    height: 300, 
+    frame: false, 
+    alwaysOnTop: true
+  });
+  splash.loadURL(`file://${path.join(__dirname, './../main/splash/splash.html')}`)
+  splash.center();
+  //splash.openDevTools({ mode: 'detach' });
+  
+  setTimeout(function () {
+    splash.close();
+    createWindow()
+  }, 5000);
+}
+
+
+
+
+
+app.whenReady().then(() => {
+  showSplashScreen()
+});
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
@@ -47,6 +73,6 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
+    showSplashScreen();
   }
 });

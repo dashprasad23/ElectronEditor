@@ -1,12 +1,12 @@
 const { Menu, ipcMain} = require("electron");
 const { openFileModel } = require("./filesystem");
+const {openTerminal, closeTerminal} = require('./terminal')
 
-let selectedFileData;
 ipcMain.on('fileSelected', (event,data) => {
   menu.getMenuItemById('edit:edit').enabled = true;
   menu.getMenuItemById('edit:delete').enabled = true;
-  selectedFileData = data.data;
 })
+
 let menu = Menu.buildFromTemplate([
   {
     label: "",
@@ -33,13 +33,6 @@ let menu = Menu.buildFromTemplate([
         click: () => {
           openFileModel();
         },
-      },
-      {
-        label: "Save",
-        accelerator: "Command+S",
-      },
-      {
-        label: "Save All",
       },
       {
         type: "separator",
@@ -108,9 +101,15 @@ let menu = Menu.buildFromTemplate([
     submenu: [
       {
         label: "New Terminal",
+        click: () => {
+          openTerminal()
+        }
       },
       {
         label: "Close All",
+        click: () => {
+          closeTerminal()
+        }
       },
     ],
   },
