@@ -4,19 +4,21 @@ import Sidebar from "./Components/Sidebar";
 import { Layout } from "antd";
 import { ResizeHorizon, Resize, ResizeVertical } from "react-resize-layout";
 import CodeEditor from "./Components/CodeEditor/CodeEditor";
+import TerminalContainer from "./Components/Terminal/TerminalContainer";
 const { Content } = Layout;
 const App = () => {
   const [showTerminal, setTerminalStatus] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [terminalCount, setTerminalCount] = useState(0)
 
   window.main.ipcRenderer.on("newTerminal", () => {
-    setTerminalStatus(true)
+    setTerminalCount(terminalCount+1)
+    setTerminalStatus(true);
   });
 
   window.main.ipcRenderer.on("closeTerminal", () => {
-    setTerminalStatus(false)
-  })
-
+    setTerminalStatus(false);
+  });
 
   return (
     <Resize handleWidth="5px" handleColor="#1677ff">
@@ -34,7 +36,11 @@ const App = () => {
           </ResizeHorizon>
         </Resize>
       </ResizeVertical>
-      {showTerminal && <ResizeVertical  minHeight="50px">Vertical 3</ResizeVertical>}
+      {showTerminal && (
+        <ResizeVertical minHeight="300px">
+          <TerminalContainer terminalCount={terminalCount}/>
+        </ResizeVertical>
+      )}
     </Resize>
   );
 };
