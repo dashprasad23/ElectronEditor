@@ -15,7 +15,7 @@ const isMac = process.platform === 'darwin';
 
 const template = [
   ...(isMac ? [{
-    label: "Antigravity",
+    label: "ElectronEditor",
     submenu: [
       { role: 'about' },
       { type: 'separator' },
@@ -65,6 +65,21 @@ const template = [
           const win = getMainWindow();
           if (win) {
             win.webContents.send("SAVE");
+          }
+        }
+      },
+      {
+        type: "separator",
+      },
+      {
+        label: "Close Workspace",
+        accelerator: "CmdOrCtrl+Shift+W",
+        click: async () => {
+          const win = getMainWindow();
+          if (win) {
+            await win.webContents.executeJavaScript(`
+              window.main.ipcRenderer.invoke('workspace:close');
+            `);
           }
         }
       },

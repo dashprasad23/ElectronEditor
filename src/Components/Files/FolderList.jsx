@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { SimpleTreeView, TreeItem } from '@mui/x-tree-view';
 import { Box, Menu, MenuItem, Modal, TextField, Button, Typography } from "@mui/material";
@@ -13,6 +13,7 @@ import {
 } from "@mui/icons-material";
 import { readFileData } from "../../store/editorSlice";
 import FileIcon from "../FileIcon/FileIcon";
+import style from "./FolderList.module.scss"
 
 const FolderList = () => {
   const dispatch = useDispatch();
@@ -28,6 +29,35 @@ const FolderList = () => {
 
 
   const [expandedItems, setExpandedItems] = useState([]);
+
+  // Listen for operation success events to refresh the tree
+  useEffect(() => {
+    const handleOperationSuccess = (event, { type, parentPath }) => {
+      console.log(`Operation ${type} succeeded, refreshing ${parentPath}`);
+      // Find the parent node and refresh it
+      const findAndRefresh = (nodes, targetPath) => {
+        for (const node of nodes) {
+          if (node.path === targetPath) {
+            // Refresh this directory
+            window.main.ipcRenderer.send("openDir", { path: node.path, parentId: node.key });
+            return true;
+          }
+          if (node.children && findAndRefresh(node.children, targetPath)) {
+            return true;
+          }
+        }
+        return false;
+      };
+
+      findAndRefresh(treeData, parentPath);
+    };
+
+    window.main.ipcRenderer.on("operationSuccess", handleOperationSuccess);
+
+    return () => {
+      window.main.ipcRenderer.removeListener("operationSuccess", handleOperationSuccess);
+    };
+  }, [treeData]);
 
   const findNode = (nodes, id) => {
     for (const node of nodes) {
@@ -201,24 +231,13 @@ const FolderList = () => {
         onClose={() => setModalVisible(false)}
         aria-labelledby="modal-modal-title"
       >
-        <Box sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 400,
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 4,
-          borderRadius: 2
-        }}>
-          <Typography id="modal-modal-title" variant="h6" component="h2" gutterBottom>
+        <Box className={style.actionModel}>
+          <Typography id="modal-modal-title" variant="h6" component="h5" gutterBottom>
             {modalType === 'createFile' ? "New File" : modalType === 'createFolder' ? "New Folder" : "Rename"}
           </Typography>
           <TextField
             autoFocus
             fullWidth
-            label="Name"
             variant="outlined"
             size="small"
             value={inputValue}
@@ -227,8 +246,8 @@ const FolderList = () => {
             sx={{ mb: 3 }}
           />
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-            <Button onClick={() => setModalVisible(false)} variant="text">Cancel</Button>
-            <Button onClick={handleModalSubmit} variant="contained">Confirm</Button>
+            <Button onClick={() => setModalVisible(false)} variant="text" size="small">Cancel</Button>
+            <Button onClick={handleModalSubmit} variant="contained" size="small">Confirm</Button>
           </Box>
         </Box>
       </Modal>

@@ -1,70 +1,272 @@
-# Getting Started with Create React App
+# Electron Editor
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern, lightweight, and extensible code editor built with Electron and React.
 
-## Available Scripts
+![Electron Editor](public/appIcon.png)
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+- 🚀 **Fast & Lightweight** - Built with performance in mind
+- 📁 **Workspace Management** - Open folders and manage multiple files
+- 💾 **Recent Workspaces** - Quick access to your last 3 workspaces
+- 🎨 **Syntax Highlighting** - Powered by CodeMirror with support for multiple languages
+- 🖥️ **Integrated Terminal** - Built-in terminal with full shell support
+- 🎯 **File Operations** - Create, rename, and delete files/folders
+- ⌨️ **Keyboard Shortcuts** - Efficient workflow with keyboard shortcuts
+- 💻 **Cross-Platform** - Available for macOS, Windows, and Linux
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Screenshots
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Welcome Screen
+- Quick access to recent workspaces
+- Keyboard shortcuts reference
+- Clean, modern interface
 
-### `npm test`
+### Editor View
+- Syntax highlighting for multiple languages
+- File tree navigation
+- Integrated terminal
+- Tab-based file management
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Installation
 
-### `npm run build`
+### Prerequisites
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Node.js (v14 or higher)
+- npm or yarn
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Setup
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd ElectronEditor
+   ```
 
-### `npm run eject`
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+   
+   This will automatically:
+   - Install all required packages
+   - Rebuild `node-pty` for your platform using `electron-rebuild`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+3. **Run in development mode**
+   ```bash
+   npm run dev
+   ```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Development
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Available Scripts
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+#### `npm run dev`
+Runs the app in development mode with hot-reloading enabled.
+- React dev server starts on `http://localhost:3000`
+- Electron window opens automatically
 
-## Learn More
+#### `npm start`
+Runs only the React development server (without Electron).
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+#### `npm run build`
+Builds the React app for production to the `build` folder.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+#### `npm test`
+Launches the test runner in interactive watch mode.
 
-### Code Splitting
+## Building & Packaging
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Quick Build
 
-### Analyzing the Bundle Size
+```bash
+# Build for your current platform
+npm run dist
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+# Test packaging without creating installers
+npm run pack
+```
 
-### Making a Progressive Web App
+### Platform-Specific Builds
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+#### macOS
+```bash
+npm run dist:mac
+```
+Creates:
+- `.dmg` installer (Intel x64 + Apple Silicon arm64)
+- `.zip` archive
 
-### Advanced Configuration
+#### Windows
+```bash
+npm run dist:win
+```
+Creates:
+- NSIS installer (`.exe`) with installation wizard
+- Portable executable (`.exe`)
+- Both 64-bit and 32-bit versions
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+#### Linux
+```bash
+npm run dist:linux
+```
+Creates:
+- AppImage (portable, works on most distros)
+- `.deb` package (Debian/Ubuntu)
+- `.rpm` package (Fedora/RedHat/CentOS)
 
-### Deployment
+### Output
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+All build artifacts are created in the `dist/` directory:
 
-### `npm run build` fails to minify
+```
+dist/
+├── Electron Editor-0.1.0.dmg          # macOS installer
+├── Electron Editor Setup 0.1.0.exe    # Windows installer
+├── Electron Editor 0.1.0.exe          # Windows portable
+├── Electron Editor-0.1.0.AppImage     # Linux portable
+├── electron-editor_0.1.0_amd64.deb    # Debian/Ubuntu
+└── electron-editor-0.1.0.x86_64.rpm   # Fedora/RedHat
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Keyboard Shortcuts
+
+### General
+- `Cmd/Ctrl + O` - Open Folder
+- `Cmd/Ctrl + S` - Save File
+- `Cmd/Ctrl + Shift + W` - Close Workspace
+- `Cmd/Ctrl + W` - Close Window
+
+### Terminal
+- `Cmd/Ctrl + T` - New Terminal
+- `Cmd/Ctrl + \`` - Toggle Terminal
+
+### Editor
+- Click files in sidebar to open
+- Close tabs with the X button
+- Switch between tabs by clicking
+
+## Project Structure
+
+```
+ElectronEditor/
+├── public/
+│   ├── electron.js          # Main Electron process
+│   ├── preload.js          # Preload script
+│   └── AppIcons/           # Application icons
+├── main/
+│   ├── dataStore.js        # Persistent storage (electron-store)
+│   ├── filesystem.js       # File operations
+│   ├── terminal.js         # Terminal integration (node-pty)
+│   ├── Menu.js             # Application menu
+│   └── windowMain.js       # Window management
+├── src/
+│   ├── components/         # React components
+│   │   ├── CodeEditor/    # Code editor component
+│   │   ├── WelcomeScreen/ # Welcome screen
+│   │   ├── Terminal/      # Terminal UI
+│   │   └── Files/         # File tree
+│   ├── store/             # Redux store
+│   └── App.jsx            # Main React component
+└── package.json
+```
+
+## Technologies Used
+
+### Frontend
+- **React** - UI framework
+- **Redux Toolkit** - State management
+- **Material-UI** - Component library
+- **CodeMirror** - Code editor
+- **SCSS** - Styling
+
+### Backend (Electron)
+- **Electron** - Desktop app framework
+- **node-pty** - Terminal emulation
+- **electron-store** - Persistent storage
+- **xterm** - Terminal UI
+
+### Build Tools
+- **electron-builder** - Application packaging
+- **electron-rebuild** - Native module rebuilding
+- **react-scripts** - React build tools
+
+## Features in Detail
+
+### Workspace Management
+- Open any folder as a workspace
+- Automatically saves workspace to history
+- Quick access to last 3 workspaces from welcome screen
+- Close workspace with `Cmd/Ctrl + Shift + W`
+
+### File Operations
+- Create new files and folders
+- Rename files and folders
+- Delete files and folders
+- File tree with folder expansion/collapse
+
+### Integrated Terminal
+- Full shell support (bash, zsh, PowerShell, etc.)
+- Multiple terminal instances
+- Runs in the context of your workspace
+
+### Code Editor
+- Syntax highlighting for multiple languages
+- Tab-based interface
+- Auto-save support
+- Empty state with helpful tips
+
+## Troubleshooting
+
+### node-pty Build Issues
+
+If you encounter issues with `node-pty` after installation:
+
+```bash
+# Manually rebuild
+npx electron-rebuild -f -w node-pty
+
+# Or reinstall
+rm -rf node_modules package-lock.json
+npm install
+```
+
+### Build Fails
+
+1. Clear previous builds:
+   ```bash
+   rm -rf dist build
+   ```
+
+2. Reinstall dependencies:
+   ```bash
+   rm -rf node_modules package-lock.json
+   npm install
+   ```
+
+3. Try building again:
+   ```bash
+   npm run dist
+   ```
+
+### Terminal Not Working
+
+Ensure `node-pty` is properly built for your platform:
+```bash
+npx electron-rebuild -f -w node-pty
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License.
+
+## Acknowledgments
+
+- Built with [Electron](https://www.electronjs.org/)
+- UI powered by [React](https://reactjs.org/) and [Material-UI](https://mui.com/)
+- Code editing with [CodeMirror](https://codemirror.net/)
+- Terminal emulation with [node-pty](https://github.com/microsoft/node-pty) and [xterm.js](https://xtermjs.org/)

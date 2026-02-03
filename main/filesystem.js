@@ -2,6 +2,7 @@ const { getMainWindow } = require("./windowMain");
 const fs = require("fs").promises;
 const path = require("path");
 const { dialog, ipcMain } = require("electron");
+const { setCurrentWorkspace } = require("./dataStore");
 
 
 ipcMain.on("openDir", async (event, data) => {
@@ -11,8 +12,8 @@ ipcMain.on("openDir", async (event, data) => {
   event.reply("openDirReply", { data: fileData, parentId, path })
 });
 
-ipcMain.on("open-folder-dialog", () => {
-  openFileModel();
+ipcMain.on("open-folder-dialog", (event, workspacePath) => {
+  openFileModel(workspacePath);
 });
 
 ipcMain.on("createFile", async (event, data) => {
@@ -62,12 +63,31 @@ ipcMain.on("deletePath", async (event, data) => {
   }
 });
 
-const openFileModel = async () => {
+const openFileModel = async (workspacePath) => {
+  // If a workspace path is provided, use it directly
+  if (workspacePath) {
+    try {
+      // Save the workspace path to persistent storage
+      setCurrentWorkspace(workspacePath);
+
+      const fileData = await readDir(workspacePath, null);
+      getMainWindow().webContents.send("files", { data: fileData, parentId: null });
+    } catch (error) {
+      console.error('Error opening workspace:', error);
+    }
+    return;
+  }
+
+  // Otherwise, show the dialog
   dialog
     .showOpenDialog({ properties: ["openDirectory"] })
     .then(async (data) => {
       if (data.canceled) return;
       let dirPath = data.filePaths[0];
+
+      // Save the workspace path to persistent storage
+      setCurrentWorkspace(dirPath);
+
       const fileData = await readDir(dirPath, null);
       getMainWindow().webContents.send("files", { data: fileData, parentId: null });
     });

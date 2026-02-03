@@ -1,10 +1,64 @@
 import React from "react";
 import Editor from "../CodeMirrorEditor/CodeMirrorEditor";
 import { useDispatch, useSelector } from "react-redux";
-import { Tabs, Tab, Box, IconButton } from "@mui/material";
-import { Close } from "@mui/icons-material";
+import { Tabs, Tab, Box, IconButton, Typography } from "@mui/material";
+import { Close, Description, FolderOpen } from "@mui/icons-material";
 import { editorAction } from "../../store/editorSlice";
 import FileIcon from "../FileIcon/FileIcon";
+
+const EmptyEditorState = () => {
+  const isMac = window.main.os.platform === 'darwin';
+  const modifier = isMac ? '⌘' : 'Ctrl';
+
+  return (
+    <Box
+      sx={{
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        color: '#999',
+        gap: 3,
+        px: 4
+      }}
+    >
+      <Description sx={{ fontSize: 64, color: '#ddd' }} />
+      <Box sx={{ textAlign: 'center' }}>
+        <Typography variant="h6" sx={{ color: '#666', mb: 1, fontWeight: 600 }}>
+          No File Open
+        </Typography>
+        <Typography variant="body2" sx={{ color: '#999', mb: 3 }}>
+          Select a file from the sidebar to start editing
+        </Typography>
+
+        <Box sx={{
+          display: 'inline-block',
+          textAlign: 'left',
+          bgcolor: '#f8f8f8',
+          borderRadius: 2,
+          p: 2,
+          border: '1px solid #e8e8e8'
+        }}>
+          <Typography variant="caption" sx={{ color: '#999', display: 'block', mb: 1, fontWeight: 600 }}>
+            Quick Tips:
+          </Typography>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+            <Typography variant="caption" sx={{ color: '#666', fontSize: '0.75rem' }}>
+              • Click any file in the sidebar to open it
+            </Typography>
+            <Typography variant="caption" sx={{ color: '#666', fontSize: '0.75rem' }}>
+              • Use {modifier}+S to save your changes
+            </Typography>
+            <Typography variant="caption" sx={{ color: '#666', fontSize: '0.75rem' }}>
+              • Use {modifier}+Shift+W to close workspace
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
+  );
+};
 
 export const CodeEditor = (props) => {
   const dispatch = useDispatch();
@@ -25,7 +79,7 @@ export const CodeEditor = (props) => {
 
   return (
     <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-      {editorData.filesTabList.length > 0 && (
+      {editorData.filesTabList.length > 0 ? (
         <>
           <Box sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: '#f5f5f5' }}>
             <Tabs
@@ -83,6 +137,8 @@ export const CodeEditor = (props) => {
             ))}
           </Box>
         </>
+      ) : (
+        <EmptyEditorState />
       )}
     </Box>
   );

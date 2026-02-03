@@ -90,3 +90,59 @@
     border: 1px solid #d9d9d9;
   }
 }
+
+.recentSection {
+  margin: 32px 0;
+  text-align: left;
+}
+
+.recentTitle {
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  color: #333;
+  margin-bottom: 12px !important;
+}
+
+.recentList {
+  padding: 0 !important;
+}
+
+.recentItem {
+  margin-bottom: 4px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #e8e8e8;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #1677ff;
+    box-shadow: 0 2px 8px rgba(22, 119, 255, 0.1);
+  }
+}
+
+.recentButton {
+  padding: 12px 16px !important;
+
+  &:hover {
+    background-color: rgba(22, 119, 255, 0.04) !important;
+  }
+}
+
+.recentIcon {
+  min-width: 40px !important;
+  color: #1677ff;
+}
+
+.workspaceName {
+  font-weight: 600 !important;
+  color: #1a1a1a;
+  font-size: 0.95rem !important;
+}
+
+.workspacePath {
+  color: #999 !important;
+  font-size: 0.8rem !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

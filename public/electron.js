@@ -4,14 +4,87 @@ const { app, BrowserWindow, Menu } = require('electron');
 const isDev = require('electron-is-dev');
 require("dotenv").config();
 const { menu } = require("./../main/Menu");
-const { saveData } = require("./../main/dataStore");
+const {
+  saveData,
+  getData,
+  deleteData,
+  setCurrentWorkspace,
+  getCurrentWorkspace,
+  clearCurrentWorkspace,
+  getRecentWorkspaces,
+  addRecentFile,
+  getRecentFiles,
+  setEditorSetting,
+  getEditorSetting,
+  getAllData
+} = require("./../main/dataStore");
 const { setMainWindow } = require("./../main/windowMain");
 require("./../main/terminal");
 require("./../main/filesystem");
 
-ipcMain.on('store', (event, data) => {
-  saveData(data.key, data.data)
-})
+// Generic storage handlers
+ipcMain.handle('store:set', async (event, { key, value }) => {
+  saveData(key, value);
+  return { success: true };
+});
+
+ipcMain.handle('store:get', async (event, key) => {
+  return getData(key);
+});
+
+ipcMain.handle('store:delete', async (event, key) => {
+  deleteData(key);
+  return { success: true };
+});
+
+// Workspace handlers
+ipcMain.handle('workspace:set-current', async (event, path) => {
+  setCurrentWorkspace(path);
+  return { success: true };
+});
+
+ipcMain.handle('workspace:get-current', async () => {
+  return getCurrentWorkspace();
+});
+
+ipcMain.handle('workspace:get-recent', async () => {
+  return getRecentWorkspaces();
+});
+
+ipcMain.handle('workspace:close', async (event) => {
+  clearCurrentWorkspace();
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (win) {
+    win.webContents.send('workspace-closed');
+  }
+  return { success: true };
+});
+
+
+// Recent files handlers
+ipcMain.handle('files:add-recent', async (event, filePath) => {
+  addRecentFile(filePath);
+  return { success: true };
+});
+
+ipcMain.handle('files:get-recent', async () => {
+  return getRecentFiles();
+});
+
+// Editor settings handlers
+ipcMain.handle('settings:set', async (event, { key, value }) => {
+  setEditorSetting(key, value);
+  return { success: true };
+});
+
+ipcMain.handle('settings:get', async (event, key) => {
+  return getEditorSetting(key);
+});
+
+// Debug handler
+ipcMain.handle('store:get-all', async () => {
+  return getAllData();
+});
 
 // File read/write handlers
 ipcMain.handle('read-file', async (event, filePath) => {

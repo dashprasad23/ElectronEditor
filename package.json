@@ -1,8 +1,11 @@
 {
-  "name": "antigravity",
+  "name": "electroneditor",
   "version": "0.1.0",
   "private": true,
   "main": "public/electron.js",
+  "author": "Your Name",
+  "description": "Modern, lightweight, and extensible code editor",
+  "homepage": "./",
   "dependencies": {
     "@codemirror/lang-html": "^6.4.0",
     "@codemirror/lang-javascript": "^6.1.2",
@@ -22,7 +25,8 @@
     "antd": "^5.1.0",
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
-    "electron-store": "^8.1.0",
+    "electron-is-dev": "^2.0.0",
+    "electron-store": "^8.2.0",
     "i": "^0.3.7",
     "node-pty": "^1.1.0",
     "npm": "^9.2.0",
@@ -44,7 +48,13 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "dev": "concurrently -k \"cross-env BROWSER=none npm start\" \"npm:electron\"",
-    "electron": "wait-on tcp:3000 && electron ."
+    "electron": "wait-on tcp:3000 && electron .",
+    "postinstall": "npx electron-rebuild -f -w node-pty",
+    "pack": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder",
+    "dist:mac": "npm run build && electron-builder --mac",
+    "dist:win": "npm run build && electron-builder --win",
+    "dist:linux": "npm run build && electron-builder --linux"
   },
   "eslintConfig": {
     "extends": [
@@ -67,8 +77,96 @@
   "devDependencies": {
     "concurrently": "^7.6.0",
     "electron": "^40.1.0",
-    "electron-is-dev": "^2.0.0",
+    "electron-builder": "^25.1.8",
+    "electron-rebuild": "^3.2.9",
     "sass": "^1.57.1",
     "wait-on": "^7.0.1"
+  },
+  "build": {
+    "appId": "com.electroneditor.app",
+    "productName": "Electron Editor",
+    "files": [
+      "build/**/*",
+      "public/electron.js",
+      "public/preload.js",
+      "public/AppIcons/**/*",
+      "main/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "public"
+    },
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "icon": "public/AppIcons/rounded_app_icon.png",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ]
+    },
+    "win": {
+      "icon": "public/AppIcons/rounded_app_icon.png",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
+    },
+    "linux": {
+      "icon": "public/AppIcons/rounded_app_icon.png",
+      "category": "Development",
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "rpm",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
   }
 }
