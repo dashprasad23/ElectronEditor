@@ -11,8 +11,8 @@ import {
   Edit,
   Delete
 } from "@mui/icons-material";
-import { readFileData } from "../../State/Editor";
-import FileIcon from "../../UI/FileIcon";
+import { readFileData } from "../../store/editorSlice";
+import FileIcon from "../FileIcon/FileIcon";
 
 const FolderList = () => {
   const dispatch = useDispatch();

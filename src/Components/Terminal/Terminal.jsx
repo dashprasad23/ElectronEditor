@@ -13,8 +13,10 @@ const Terminal = ({ id }) => {
         const term = new XTerm({
             cursorBlink: true,
             theme: {
-                background: '#1e1e1e',
-                foreground: '#ffffff'
+                background: '#ffffff',
+                foreground: '#000000',
+                cursor: '#1677ff',
+                selectionBackground: '#1677ff33'
             }
         });
         const fitAddon = new FitAddon();
@@ -22,15 +24,19 @@ const Terminal = ({ id }) => {
 
         term.open(terminalRef.current);
         fitAddon.fit();
+        term.focus(); // Ensure focus after opening
 
         xtermRef.current = term;
         fitAddonRef.current = fitAddon;
+
+        console.log(`Renderer: Initializing terminal ${id}`);
 
         // Notify main process to create PTY
         window.main.ipcRenderer.send('term.init', id);
 
         // Input from user -> Main
         term.onData(data => {
+            console.log(`Renderer: Terminal ${id} data input length: ${data.length}`);
             window.main.ipcRenderer.send('term.input', { id, data });
         });
 
@@ -56,6 +62,7 @@ const Terminal = ({ id }) => {
         setTimeout(() => handleResize(), 100);
 
         return () => {
+            console.log(`Renderer: Disposing terminal ${id}`);
             window.main.ipcRenderer.send('term.close', id);
             window.main.ipcRenderer.removeListener('term.incoming', handleIncoming);
             window.removeEventListener('resize', handleResize);

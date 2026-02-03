@@ -56,15 +56,15 @@ const TerminalContainer = () => {
 
   if (terminals.length === 0) {
     return (
-      <Box sx={{ p: 3, color: 'text.secondary', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', bgcolor: '#1e1e1e' }}>
-        <Typography>No open terminals. Go to Terminal -&gt; New Terminal to open one.</Typography>
+      <Box sx={{ p: 3, color: 'text.secondary', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', bgcolor: '#ffffff' }}>
+        <Typography>No open terminals. Go to Terminal {"->"} New Terminal to open one. </Typography>
       </Box>
     );
   }
 
   return (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: '#1e1e1e' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'rgba(255,255,255,0.1)' }}>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: '#ffffff' }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs
           value={activeKey}
           onChange={handleChange}
@@ -80,9 +80,9 @@ const TerminalContainer = () => {
                 minHeight: 32,
                 py: 0.5,
                 px: 2,
-                color: 'rgba(255,255,255,0.7)',
+                color: 'rgba(0,0,0,0.6)',
                 textTransform: 'none',
-                '&.Mui-selected': { color: '#fff' }
+                '&.Mui-selected': { color: '#1677ff' }
               }}
               label={
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

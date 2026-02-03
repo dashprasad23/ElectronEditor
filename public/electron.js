@@ -5,10 +5,36 @@ const isDev = require('electron-is-dev');
 require("dotenv").config();
 const { menu } = require("./../main/Menu");
 const { saveData } = require("./../main/dataStore");
+const { setMainWindow } = require("./../main/windowMain");
+require("./../main/terminal");
+require("./../main/filesystem");
 
 ipcMain.on('store', (event, data) => {
   saveData(data.key, data.data)
 })
+
+// File read/write handlers
+ipcMain.handle('read-file', async (event, filePath) => {
+  const fs = require('fs').promises;
+  try {
+    const content = await fs.readFile(filePath, 'utf-8');
+    return content;
+  } catch (error) {
+    console.error('Error reading file:', error);
+    throw error;
+  }
+});
+
+ipcMain.handle('save-file', async (event, { path, content }) => {
+  const fs = require('fs').promises;
+  try {
+    await fs.writeFile(path, content, 'utf-8');
+    return { success: true };
+  } catch (error) {
+    console.error('Error saving file:', error);
+    throw error;
+  }
+});
 
 function createWindow() {
   // Create the browser window.
@@ -20,6 +46,7 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js')
     },
   });
+  setMainWindow(win);
   if (process.platform === 'darwin') {
     app.dock.setIcon(path.join(__dirname, 'AppIcons/rounded_app_icon.png'));
   }
@@ -42,33 +69,8 @@ function createWindow() {
 }
 
 
-const showSplashScreen = () => {
-  var splash = new BrowserWindow({
-    width: 500,
-    height: 300,
-    frame: false,
-    alwaysOnTop: true
-  });
-  splash.loadURL(`file://${path.join(__dirname, './../main/splash/splash.html')}`)
-  splash.center();
-  if (process.platform === 'darwin') {
-    app.dock.setIcon(path.join(__dirname, 'AppIcons/rounded_app_icon.png'));
-  }
-  splash.setIcon(path.join(__dirname, 'AppIcons/rounded_app_icon.png'));
-  //splash.openDevTools({ mode: 'detach' });
-
-  setTimeout(function () {
-    splash.close();
-    createWindow()
-  }, 5000);
-}
-
-
-
-
-
 app.whenReady().then(() => {
-  showSplashScreen()
+  createWindow()
 });
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -78,6 +80,6 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    showSplashScreen();
+    createWindow();
   }
 });

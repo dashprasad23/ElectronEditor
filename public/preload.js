@@ -1,6 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const { globalShortcut } = require('electron');
 
 contextBridge.exposeInMainWorld('main', {
@@ -15,6 +16,10 @@ contextBridge.exposeInMainWorld('main', {
     removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel),
   },
   path: { ...path },
+  os: {
+    platform: os.platform(),
+    homedir: os.homedir(),
+  },
   electron: () => process.versions.electron,
   // we can also expose variables, not just functions
 })

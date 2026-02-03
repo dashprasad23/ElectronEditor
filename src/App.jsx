@@ -1,68 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import classes from "./App.module.scss";
-import Sidebar from "./Components/Sidebar";
-import { Box, Typography, Paper } from "@mui/material";
-import { FolderOpen, Terminal, Search } from "@mui/icons-material";
+import Sidebar from "./components/Sidebar";
+import WelcomeScreen from "./components/WelcomeScreen/WelcomeScreen";
+import { Box } from "@mui/material";
 import { ResizeHorizon, Resize, ResizeVertical } from "react-resize-layout";
-import CodeEditor from "./Components/CodeEditor/CodeEditor";
-import TerminalContainer from "./Components/Terminal/TerminalContainer";
-import { editorAction, saveCurrentFile } from "./State/Editor";
+import CodeEditor from "./components/CodeEditor/CodeEditor";
+import TerminalContainer from "./components/Terminal/TerminalContainer";
+import { editorAction, saveCurrentFile } from "./store/editorSlice";
 
-const WelcomeScreen = () => {
-  const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-  const modKey = isMac ? "⌘" : "Ctrl";
-
-  const handleOpenFolder = () => {
-    window.main.ipcRenderer.send("open-folder-dialog");
-  };
-
-  const handleNewTerminal = () => {
-    window.main.ipcRenderer.send("trigger-new-terminal");
-  };
-
-  return (
-    <Box className={classes.WelcomeContainer}>
-      <Box className={classes.WelcomeHero}>
-        <Typography variant="h1" className={classes.HeroTitle}>
-          Electron Editor
-        </Typography>
-        <Typography variant="h5" className={classes.HeroSubtitle}>
-          Modern, lightweight, and extensible.
-        </Typography>
-
-        <Box className={classes.ActionCards}>
-          <Paper elevation={0} className={classes.ActionCard} onClick={handleOpenFolder}>
-            <FolderOpen className={classes.ActionIcon} />
-            <Box textOverflow="ellipsis">
-              <Typography variant="h6">Open Directory</Typography>
-              <Typography variant="body2" color="textSecondary">Browse and open a project folder</Typography>
-            </Box>
-            <Typography variant="caption" className={classes.ShortcutLabel}>{modKey} + O</Typography>
-          </Paper>
-
-          <Paper elevation={0} className={classes.ActionCard} onClick={handleNewTerminal}>
-            <Terminal className={classes.ActionIcon} />
-            <Box>
-              <Typography variant="h6">Terminal</Typography>
-              <Typography variant="body2" color="textSecondary">Open a new integrated terminal</Typography>
-            </Box>
-            <Typography variant="caption" className={classes.ShortcutLabel}>{modKey} + T</Typography>
-          </Paper>
-
-          <Paper elevation={0} className={classes.ActionCard}>
-            <Search className={classes.ActionIcon} />
-            <Box>
-              <Typography variant="h6">Search Files</Typography>
-              <Typography variant="body2" color="textSecondary">Find files quickly in your workspace</Typography>
-            </Box>
-            <Typography variant="caption" className={classes.ShortcutLabel}>{modKey} + ⇧ + F</Typography>
-          </Paper>
-        </Box>
-      </Box>
-    </Box>
-  );
-};
 
 const App = () => {
   const [showTerminal, setTerminalStatus] = useState(false);

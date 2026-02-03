@@ -1,10 +1,10 @@
 import React from "react";
-import Editor from "../../UI/Editor";
+import Editor from "../CodeMirrorEditor/CodeMirrorEditor";
 import { useDispatch, useSelector } from "react-redux";
 import { Tabs, Tab, Box, IconButton } from "@mui/material";
 import { Close } from "@mui/icons-material";
-import { editorAction } from "../../State/Editor";
-import FileIcon from "../../UI/FileIcon";
+import { editorAction } from "../../store/editorSlice";
+import FileIcon from "../FileIcon/FileIcon";
 
 export const CodeEditor = (props) => {
   const dispatch = useDispatch();
