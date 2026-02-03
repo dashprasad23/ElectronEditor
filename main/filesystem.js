@@ -8,7 +8,11 @@ ipcMain.on("openDir", async (event, data) => {
   let path = data.path;
   let parentId = data.parentId
   const fileData = await readDir(path, parentId);
-  event.reply("openDirReply", {data: fileData, parentId, path})
+  event.reply("openDirReply", { data: fileData, parentId, path })
+});
+
+ipcMain.on("open-folder-dialog", () => {
+  openFileModel();
 });
 
 ipcMain.on("createFile", async (event, data) => {
@@ -65,14 +69,14 @@ const openFileModel = async () => {
       if (data.canceled) return;
       let dirPath = data.filePaths[0];
       const fileData = await readDir(dirPath, null);
-      getMainWindow().webContents.send("files", {data: fileData, parentId: null});
+      getMainWindow().webContents.send("files", { data: fileData, parentId: null });
     });
 };
 
 async function readDir(dirPath, parentId) {
- const  files = await fs.readdir(dirPath);
- const fileData = await formatFile(files, dirPath, parentId);
- return fileData;
+  const files = await fs.readdir(dirPath);
+  const fileData = await formatFile(files, dirPath, parentId);
+  return fileData;
 }
 
 function formatFile(files, dirPath, parentId) {

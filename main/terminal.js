@@ -6,6 +6,10 @@ const { getMainWindow } = require("./windowMain");
 const shell = process.env[os.platform() === 'win32' ? 'COMSPEC' : 'SHELL'];
 const ptySessions = {};
 
+ipcMain.on("trigger-new-terminal", () => {
+    openTerminal();
+});
+
 // When renderer requests a new terminal session
 ipcMain.on("term.init", (event, id) => {
 

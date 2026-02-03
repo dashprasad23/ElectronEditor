@@ -1,15 +1,15 @@
 import FolderList from "../Components/Files/FolderList";
-import { FileOutlined, GithubOutlined } from "@ant-design/icons";
+import { FolderCopy, GitHub } from "@mui/icons-material";
 
 export const TabList = [
   {
-    name: "files",
-    icon: <FileOutlined />,
+    name: "Files",
+    icon: <FolderCopy fontSize="small" />,
     children: <FolderList />,
   },
   {
     name: "Git",
-    icon: <GithubOutlined />,
+    icon: <GitHub fontSize="small" />,
     children: <></>,
   },
 ];

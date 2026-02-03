@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Tabs } from 'antd';
+import { Box, Tabs, Tab, IconButton, Typography } from '@mui/material';
+import { Close } from '@mui/icons-material';
 import Terminal from './Terminal';
 
 const TerminalContainer = () => {
-  // Start with one terminal by default
   const [terminals, setTerminals] = useState([{ id: '1', key: '1' }]);
   const [activeKey, setActiveKey] = useState('1');
 
@@ -30,14 +30,8 @@ const TerminalContainer = () => {
     };
   }, []);
 
-  const onChange = (newActiveKey) => {
+  const handleChange = (event, newActiveKey) => {
     setActiveKey(newActiveKey);
-  };
-
-  const onEdit = (targetKey, action) => {
-    if (action === 'remove') {
-      remove(targetKey);
-    }
   };
 
   const remove = (targetKey) => {
@@ -61,26 +55,64 @@ const TerminalContainer = () => {
   };
 
   if (terminals.length === 0) {
-    return <div style={{ padding: 20, color: '#ccc', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>No open terminals. Go to Terminal -> New Terminal to open one.</div>;
+    return (
+      <Box sx={{ p: 3, color: 'text.secondary', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', bgcolor: '#1e1e1e' }}>
+        <Typography>No open terminals. Go to Terminal -&gt; New Terminal to open one.</Typography>
+      </Box>
+    );
   }
 
   return (
-    <Tabs
-      style={{ height: '100%' }}
-      tabPosition="top"
-      type="editable-card"
-      activeKey={activeKey}
-      onChange={onChange}
-      onEdit={onEdit}
-      items={terminals.map((item, i) => {
-        return {
-          label: `Terminal ${i + 1}`,
-          key: item.key,
-          children: <Terminal id={item.id} />,
-          closable: true
-        };
-      })}
-    />
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: '#1e1e1e' }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'rgba(255,255,255,0.1)' }}>
+        <Tabs
+          value={activeKey}
+          onChange={handleChange}
+          variant="scrollable"
+          scrollButtons="auto"
+          sx={{ minHeight: 32 }}
+        >
+          {terminals.map((item, i) => (
+            <Tab
+              key={item.key}
+              value={item.key}
+              sx={{
+                minHeight: 32,
+                py: 0.5,
+                px: 2,
+                color: 'rgba(255,255,255,0.7)',
+                textTransform: 'none',
+                '&.Mui-selected': { color: '#fff' }
+              }}
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  {`Terminal ${i + 1}`}
+                  <IconButton
+                    size="small"
+                    onClick={(e) => { e.stopPropagation(); remove(item.key); }}
+                    sx={{ p: 0.2, ml: 1, color: 'inherit' }}
+                  >
+                    <Close sx={{ fontSize: 12 }} />
+                  </IconButton>
+                </Box>
+              }
+            />
+          ))}
+        </Tabs>
+      </Box>
+      <Box sx={{ flexGrow: 1, overflow: 'hidden' }}>
+        {terminals.map((item) => (
+          <Box
+            key={item.key}
+            role="tabpanel"
+            hidden={activeKey !== item.key}
+            sx={{ height: '100%' }}
+          >
+            {activeKey === item.key && <Terminal id={item.id} />}
+          </Box>
+        ))}
+      </Box>
+    </Box>
   );
 };
 

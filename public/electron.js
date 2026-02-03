@@ -1,14 +1,14 @@
 const path = require('path');
-const {ipcMain} = require('electron');
-const { app, BrowserWindow, Menu} = require('electron');
+const { ipcMain } = require('electron');
+const { app, BrowserWindow, Menu } = require('electron');
 const isDev = require('electron-is-dev');
 require("dotenv").config();
 const { menu } = require("./../main/Menu");
 const { saveData } = require("./../main/dataStore");
-const {listenKeyBoardEvent} = require("../main/keyBoardEvent");
+const { listenKeyBoardEvent } = require("../main/keyBoardEvent");
 
-ipcMain.on('store', (event,data) => {
-  saveData(data.key,data.data)
+ipcMain.on('store', (event, data) => {
+  saveData(data.key, data.data)
 })
 
 function createWindow() {
@@ -21,7 +21,10 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js')
     },
   });
-  // win.setIcon(path.join(__dirname, '/public/appIcon.png'));
+  if (process.platform === 'darwin') {
+    app.dock.setIcon(path.join(__dirname, 'AppIcons/rounded_app_icon.png'));
+  }
+  win.setIcon(path.join(__dirname, 'AppIcons/rounded_app_icon.png'));
 
   // and load the index.html of the app.
   // win.loadFile("index.html");
@@ -43,15 +46,19 @@ function createWindow() {
 
 const showSplashScreen = () => {
   var splash = new BrowserWindow({
-    width: 500, 
-    height: 300, 
-    frame: false, 
+    width: 500,
+    height: 300,
+    frame: false,
     alwaysOnTop: true
   });
   splash.loadURL(`file://${path.join(__dirname, './../main/splash/splash.html')}`)
   splash.center();
+  if (process.platform === 'darwin') {
+    app.dock.setIcon(path.join(__dirname, 'AppIcons/rounded_app_icon.png'));
+  }
+  splash.setIcon(path.join(__dirname, 'AppIcons/rounded_app_icon.png'));
   //splash.openDevTools({ mode: 'detach' });
-  
+
   setTimeout(function () {
     splash.close();
     createWindow()

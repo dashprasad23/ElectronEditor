@@ -1,33 +1,44 @@
-import { Layout, Tabs} from 'antd';
-import {TabList} from '../Constants/SidebarTabs'
-import classes from './Sidebar.module.scss';
-const { Sider } = Layout;
-
+import React, { useState } from 'react';
+import { Box, Tabs, Tab } from '@mui/material';
+import { TabList } from '../Constants/SidebarTabs'
 
 const Sidebar = (props) => {
+  const [value, setValue] = useState(0);
 
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
   return (
-    <Sider trigger={null} className={classes.Sidebar} collapsible collapsed={props.collapsed}>
-      <Tabs
-        defaultActiveKey="1"
-        type="card"
-        size="small"
-        items={TabList.map((tab, i) => {
-          const id = String(i + 1);
-          return {
-            label: (
-              <span className={classes.TabHeader}>
-                {tab.icon}
-                {tab.name}
-              </span>
-            ),
-            key: id,
-            children: (tab.children),
-          };
-        })}
-      />
-    </Sider>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', borderRight: 1, borderColor: 'divider', bgcolor: '#fff' }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          aria-label="sidebar tabs"
+          variant="fullWidth"
+          sx={{ minHeight: 32 }}
+        >
+          {TabList.map((tab, i) => (
+            <Tab
+              key={i}
+              icon={tab.icon}
+              label={tab.name}
+              sx={{
+                minWidth: 0,
+                fontSize: '0.65rem',
+                padding: '4px 0',
+                minHeight: 32,
+                '& .MuiSvgIcon-root': { fontSize: 16 }
+              }}
+            />
+          ))}
+        </Tabs>
+      </Box>
+      <Box sx={{ flexGrow: 1, overflow: 'auto', p: 1 }}>
+        {TabList[value]?.children}
+      </Box>
+    </Box>
   );
 };
 

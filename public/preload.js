@@ -1,18 +1,20 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const fs = require('fs');
 const path = require('path');
-const {globalShortcut} = require('electron');
+const { globalShortcut } = require('electron');
 
 contextBridge.exposeInMainWorld('main', {
-  fs: {...fs},
-  fsPromis: {...fs.promises},
+  fs: { ...fs },
+  fsPromis: { ...fs.promises },
   globalShortcut,
   ipcRenderer: {
-    ...ipcRenderer,
-    on: ipcRenderer.on.bind(ipcRenderer),
-    removeListener: ipcRenderer.removeListener.bind(ipcRenderer),
+    on: (channel, func) => ipcRenderer.on(channel, func),
+    send: (channel, data) => ipcRenderer.send(channel, data),
+    invoke: (channel, data) => ipcRenderer.invoke(channel, data),
+    removeListener: (channel, func) => ipcRenderer.removeListener(channel, func),
+    removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel),
   },
-  path: {...path},
+  path: { ...path },
   electron: () => process.versions.electron,
   // we can also expose variables, not just functions
 })

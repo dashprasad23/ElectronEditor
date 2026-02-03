@@ -1,5 +1,5 @@
 {
-  "name": "code-editor",
+  "name": "antigravity",
   "version": "0.1.0",
   "private": true,
   "main": "public/electron.js",
@@ -8,6 +8,12 @@
     "@codemirror/lang-javascript": "^6.1.2",
     "@codemirror/language": "^6.3.2",
     "@codemirror/legacy-modes": "^6.3.1",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.7",
+    "@mui/lab": "^7.0.1-beta.21",
+    "@mui/material": "^7.3.7",
+    "@mui/x-tree-view": "^8.27.0",
     "@reduxjs/toolkit": "^1.9.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -60,7 +66,7 @@
   },
   "devDependencies": {
     "concurrently": "^7.6.0",
-    "electron": "^22.0.0",
+    "electron": "^40.1.0",
     "electron-is-dev": "^2.0.0",
     "sass": "^1.57.1",
     "wait-on": "^7.0.1"
