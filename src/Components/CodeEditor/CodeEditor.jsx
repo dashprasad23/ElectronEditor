@@ -2,8 +2,9 @@ import React from "react";
 import Editor from "../../UI/Editor";
 import { useDispatch, useSelector } from "react-redux";
 import { Tabs, Tab, Box, IconButton } from "@mui/material";
-import { Close, InsertDriveFile } from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
 import { editorAction } from "../../State/Editor";
+import FileIcon from "../../UI/FileIcon";
 
 export const CodeEditor = (props) => {
   const dispatch = useDispatch();
@@ -18,28 +19,9 @@ export const CodeEditor = (props) => {
     dispatch(editorAction.deleteCodeFile(key));
   };
 
-  const saveFileData = (fileData) => {
-    dispatch(editorAction.editFile({ code: fileData }));
-    if (editorData.filesTabList.length > 0) {
-      const selectedFile = editorData.filesTabList[editorData.activeTabIndex];
-      window.main.fs.writeFile(selectedFile.path, fileData, (err) => {
-      });
-    }
-  }
-
-  const debounce = (func) => {
-    let timer;
-    return function (...args) {
-      const context = this;
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(() => {
-        timer = null;
-        func.apply(context, args);
-      }, 500);
-    };
+  const onEditorChange = (value) => {
+    dispatch(editorAction.editFile({ code: value }));
   };
-
-  const onEditorChange = debounce(saveFileData);
 
   return (
     <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -67,7 +49,7 @@ export const CodeEditor = (props) => {
                   }}
                   label={
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <InsertDriveFile sx={{ fontSize: 13 }} />
+                      <FileIcon fileName={tab.title} size={14} />
                       {tab.title}
                       <IconButton
                         size="small"

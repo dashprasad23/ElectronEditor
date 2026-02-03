@@ -5,7 +5,6 @@ import { Box, Menu, MenuItem, Modal, TextField, Button, Typography } from "@mui/
 import {
   ExpandMore,
   ChevronRight,
-  InsertDriveFile,
   Folder,
   CreateNewFolder,
   NoteAdd,
@@ -13,6 +12,7 @@ import {
   Delete
 } from "@mui/icons-material";
 import { readFileData } from "../../State/Editor";
+import FileIcon from "../../UI/FileIcon";
 
 const FolderList = () => {
   const dispatch = useDispatch();
@@ -27,40 +27,54 @@ const FolderList = () => {
   const [inputValue, setInputValue] = useState("");
 
 
-  const handleSelect = (event, nodeId) => {
-    // Find node in treeData
-    const findNode = (nodes, id) => {
-      for (const node of nodes) {
-        if (node.key === id) return node;
-        if (node.children) {
-          const found = findNode(node.children, id);
-          if (found) return found;
-        }
-      }
-      return null;
-    };
+  const [expandedItems, setExpandedItems] = useState([]);
 
+  const findNode = (nodes, id) => {
+    for (const node of nodes) {
+      if (node.key === id) return node;
+      if (node.children) {
+        const found = findNode(node.children, id);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+
+  const handleExpandedItemsChange = (event, itemIds) => {
+    const newlyExpanded = itemIds.find(id => !expandedItems.includes(id));
+    setExpandedItems(itemIds);
+
+    if (newlyExpanded) {
+      const node = findNode(treeData, newlyExpanded);
+      if (node && !node.isLeaf && (!node.children || node.children.length === 0)) {
+        window.main.ipcRenderer.send("openDir", { path: node.path, parentId: node.key });
+      }
+    }
+  };
+
+  const handleSelect = (event, nodeId) => {
     const node = findNode(treeData, nodeId);
-    if (node) {
+    if (!node) return;
+
+    if (node.isLeaf) {
       const selectedFileData = {
         title: node.key,
         path: node.path,
         key: node.key,
       };
       window.main.ipcRenderer.send("fileSelected", { data: selectedFileData });
-
-      if (node.isLeaf) {
-        dispatch(readFileData({
-          key: node.key,
-          title: node.title,
-          path: node.path,
-        }));
-      } else {
-        // Expand folder
-        if (!node.children || node.children.length === 0) {
-          window.main.ipcRenderer.send("openDir", { path: node.path, parentId: node.key });
-        }
-      }
+      dispatch(readFileData({
+        key: node.key,
+        title: node.title,
+        path: node.path,
+      }));
+    } else {
+      // Toggle expansion manually for the content click
+      const isExpanded = expandedItems.includes(nodeId);
+      const newExpanded = isExpanded
+        ? expandedItems.filter(id => id !== nodeId)
+        : [...expandedItems, nodeId];
+      handleExpandedItemsChange(event, newExpanded);
     }
   };
 
@@ -130,7 +144,13 @@ const FolderList = () => {
           onContextMenu={(e) => handleContextMenu(e, nodes)}
           sx={{ display: 'flex', alignItems: 'center', p: '2px 0' }}
         >
-          {nodes.isLeaf ? <InsertDriveFile sx={{ fontSize: 16, mr: 0.5, color: '#666' }} /> : <Folder sx={{ fontSize: 16, mr: 0.5, color: '#1677ff' }} />}
+          {nodes.isLeaf ? (
+            <Box sx={{ mr: 0.5, display: 'flex', alignItems: 'center' }}>
+              <FileIcon fileName={nodes.title} size={16} />
+            </Box>
+          ) : (
+            <Folder sx={{ fontSize: 16, mr: 0.5, color: '#1677ff' }} />
+          )}
           <Typography variant="caption" sx={{ fontWeight: 'inherit', flexGrow: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.8rem' }}>
             {nodes.title}
           </Typography>
@@ -151,7 +171,10 @@ const FolderList = () => {
           collapseIcon: ExpandMore,
           expandIcon: ChevronRight,
         }}
+        expandedItems={expandedItems}
+        onExpandedItemsChange={handleExpandedItemsChange}
         onItemClick={handleSelect}
+        expansionTrigger="iconContainer"
         sx={{ flexGrow: 1, maxWidth: '100%', overflowY: 'auto' }}
       >
         {treeData.map((node) => renderTree(node))}

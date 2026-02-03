@@ -1,6 +1,7 @@
 const { Menu, ipcMain, app } = require("electron");
 const { openFileModel } = require("./filesystem");
-const { openTerminal, closeTerminal } = require('./terminal')
+const { openTerminal, closeTerminal } = require('./terminal');
+const { getMainWindow } = require("./windowMain");
 
 ipcMain.on('fileSelected', (event, data) => {
   const editMenu = Menu.getApplicationMenu().getMenuItemById('edit-menu');
@@ -53,6 +54,19 @@ const template = [
         click: () => {
           openFileModel();
         },
+      },
+      {
+        type: "separator",
+      },
+      {
+        label: "Save",
+        accelerator: "CmdOrCtrl+S",
+        click: () => {
+          const win = getMainWindow();
+          if (win) {
+            win.webContents.send("SAVE");
+          }
+        }
       },
       {
         type: "separator",

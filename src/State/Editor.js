@@ -64,9 +64,13 @@ const editorSlice = createSlice({
             const { parentId, children } = action.payload;
             const updateChildren = (parentId, children, filesData) => {
                 return filesData.map(node => {
-                    if (node.path === parentId) {
+                    const isSame = node.path === parentId;
+                    const isParent = parentId.startsWith(node.path + (node.path.endsWith('/') || node.path.endsWith('\\') ? '' : '/')) ||
+                        parentId.startsWith(node.path + '\\');
+
+                    if (isSame) {
                         return { ...node, children: children };
-                    } else if (node.children && parentId.startsWith(node.path)) {
+                    } else if (node.children && isParent) {
                         return { ...node, children: updateChildren(parentId, children, node.children) };
                     }
                     return node;
@@ -89,6 +93,19 @@ export const readFileData = (file) => {
     }
 }
 
-
+export const saveCurrentFile = () => {
+    return async (dispatch, getState) => {
+        const state = getState().editor;
+        if (state.activeTabIndex > -1) {
+            const activeFile = state.filesTabList[state.activeTabIndex];
+            try {
+                await window.main.fsPromis.writeFile(activeFile.path, activeFile.fileText);
+                console.log("File saved successfully:", activeFile.path);
+            } catch (err) {
+                console.error("Failed to save file:", err);
+            }
+        }
+    }
+}
 
 export default editorSlice.reducer;

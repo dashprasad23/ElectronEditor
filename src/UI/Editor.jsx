@@ -12,30 +12,36 @@ const Editor = (props) => {
 
     const setEditorMode = useCallback((fileExt) => {
         console.log(fileExt)
-        switch(fileExt) {
+        switch (fileExt) {
             case 'rb':
                 setMode([StreamLanguage.define(ruby)])
-            break;
+                break;
             case 'go':
                 setMode([StreamLanguage.define(go)])
-            break;
+                break;
             case 'js':
                 setMode([javascript({ jsx: true })])
-            break;
+                break;
             case 'jsx':
                 setMode([javascript({ jsx: true })])
-            break;
+                break;
+            case 'ts':
+                setMode([javascript({ typescript: true })])
+                break;
+            case 'tsx':
+                setMode([javascript({ typescript: true, jsx: true })])
+                break;
             case 'css':
                 setMode([StreamLanguage.define(css)])
-            break;
+                break;
             case 'html':
                 setMode([html()])
-            break;
+                break;
 
             default:
 
         }
-    },[])
+    }, [])
 
     useEffect(() => {
         const re = /(?:\.([^.]+))?$/;
@@ -43,7 +49,7 @@ const Editor = (props) => {
         setEditorMode(ext)
 
     }, [props.fileName, setEditorMode])
-  
+
 
 
     return (<CodeMirror
@@ -55,4 +61,4 @@ const Editor = (props) => {
 
 }
 
-export default  Editor;
+export default Editor;
