@@ -1,4 +1,3 @@
-import React from 'react';
 import FolderList from "../components/Files/FolderList";
 import { FolderCopy, GitHub } from "@mui/icons-material";
 

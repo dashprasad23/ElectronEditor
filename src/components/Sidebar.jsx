@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Tabs, Tab } from '@mui/material';
-import { TabList } from '../constants/sidebarTabs'
+import { TabList } from '../constants/SidebarTabs'
 
 const Sidebar = (props) => {
   const [value, setValue] = useState(0);
