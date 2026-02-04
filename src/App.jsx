@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import classes from "./App.module.scss";
 import Sidebar from "./components/Sidebar";
 import WelcomeScreen from "./components/WelcomeScreen/WelcomeScreen";
 import { Box } from "@mui/material";
@@ -8,6 +7,7 @@ import { ResizeHorizon, Resize, ResizeVertical } from "react-resize-layout";
 import CodeEditor from "./components/CodeEditor/CodeEditor";
 import TerminalContainer from "./components/Terminal/TerminalContainer";
 import { editorAction, saveCurrentFile } from "./store/editorSlice";
+import Footer from "./components/Footer/Footer";
 
 
 const App = () => {
@@ -23,6 +23,10 @@ const App = () => {
       if (resp.data) {
         dispatch(editorAction.setTreeData(resp.data));
         dispatch(editorAction.setFolderOpen(true));
+        // Extract folder name from path (handling both windows/unix separators)
+        const separator = resp.path.includes("\\") ? "\\" : "/";
+        const folderName = resp.path.split(separator).pop() || resp.path;
+        dispatch(editorAction.setRootDirectoryName(folderName));
       }
     };
 
@@ -62,32 +66,35 @@ const App = () => {
   }, [dispatch]);
 
   return (
-    <div style={{ height: "100vh", width: "100vw", overflow: "hidden" }}>
-      <Resize handleWidth="5px" handleColor="#1677ff">
-        <ResizeVertical>
-          {isFolderOpen ? (
-            <Resize handleWidth="5px" handleColor="#1677ff">
-              <ResizeHorizon width="300px" minWidth="200px" maxWidth="500px">
-                <Sidebar collapsed={collapsed} />
-              </ResizeHorizon>
-              <ResizeHorizon minWidth="150px">
-                <Box sx={{ height: '100%', width: '100%', overflow: 'hidden' }}>
-                  <CodeEditor />
-                </Box>
-              </ResizeHorizon>
-            </Resize>
-          ) : (
-            <Box sx={{ height: '100%', width: '100%' }}>
-              <WelcomeScreen />
-            </Box>
-          )}
-        </ResizeVertical>
-        {showTerminal && (
-          <ResizeVertical minHeight="300px">
-            <TerminalContainer terminalCount={terminalCount} />
+    <div style={{ height: "100vh", width: "100vw", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+      <div style={{ flex: 1, overflow: "hidden", position: 'relative' }}>
+        <Resize handleWidth="5px" handleColor="#1677ff">
+          <ResizeVertical>
+            {isFolderOpen ? (
+              <Resize handleWidth="5px" handleColor="#1677ff">
+                <ResizeHorizon width="300px" minWidth="200px" maxWidth="500px">
+                  <Sidebar collapsed={collapsed} />
+                </ResizeHorizon>
+                <ResizeHorizon minWidth="150px">
+                  <Box sx={{ height: '100%', width: '100%', overflow: 'hidden' }}>
+                    <CodeEditor />
+                  </Box>
+                </ResizeHorizon>
+              </Resize>
+            ) : (
+              <Box sx={{ height: '100%', width: '100%' }}>
+                <WelcomeScreen />
+              </Box>
+            )}
           </ResizeVertical>
-        )}
-      </Resize>
+          {showTerminal && (
+            <ResizeVertical minHeight="300px">
+              <TerminalContainer terminalCount={terminalCount} />
+            </ResizeVertical>
+          )}
+        </Resize>
+      </div>
+      <Footer />
     </div>
   );
 };

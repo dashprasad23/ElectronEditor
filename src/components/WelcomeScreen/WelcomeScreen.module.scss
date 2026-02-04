@@ -105,6 +105,26 @@
 
 .recentList {
   padding: 0 !important;
+  max-height: 300px;
+  overflow-y: auto;
+
+  /* Custom Scrollbar */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #d9d9d9;
+    border-radius: 3px;
+
+    &:hover {
+      background: #bfbfbf;
+    }
+  }
 }
 
 .recentItem {
@@ -113,18 +133,46 @@
   overflow: hidden;
   border: 1px solid #e8e8e8;
   transition: all 0.2s ease;
+  position: relative; // For positioning delete button if needed, though flex is better
 
   &:hover {
     border-color: #1677ff;
     box-shadow: 0 2px 8px rgba(22, 119, 255, 0.1);
+
+    .deleteButton {
+      opacity: 1;
+      visibility: visible;
+    }
   }
 }
 
 .recentButton {
   padding: 12px 16px !important;
+  padding-right: 48px !important; // Make space for delete button
 
   &:hover {
     background-color: rgba(22, 119, 255, 0.04) !important;
+  }
+}
+
+.deleteButton {
+  position: absolute !important;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  color: #999 !important;
+  min-width: 32px !important;
+  width: 32px !important;
+  height: 32px !important;
+  padding: 4px !important;
+  border-radius: 4px !important;
+
+  &:hover {
+    background-color: rgba(255, 77, 79, 0.1) !important;
+    color: #ff4d4f !important;
   }
 }
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Tabs, Tab } from '@mui/material';
 import { TabList } from '../constants/SidebarTabs'
-
+import style from "./Sidebar.module.scss"
 const Sidebar = (props) => {
   const [value, setValue] = useState(0);
 
@@ -10,7 +10,7 @@ const Sidebar = (props) => {
   };
 
   return (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', borderRight: 1, borderColor: 'divider', bgcolor: '#fff' }}>
+    <Box className={style.sidebar} sx={{ height: '100%', display: 'flex', flexDirection: 'column', borderRight: 1, borderColor: 'divider', bgcolor: '#fff' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs
           value={value}
@@ -35,7 +35,7 @@ const Sidebar = (props) => {
           ))}
         </Tabs>
       </Box>
-      <Box sx={{ flexGrow: 1, overflow: 'auto', p: 1 }}>
+      <Box sx={{ flexGrow: 1}}>
         {TabList[value]?.children}
       </Box>
     </Box>

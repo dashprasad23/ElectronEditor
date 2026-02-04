@@ -16,7 +16,7 @@ const {
   getRecentFiles,
   setEditorSetting,
   getEditorSetting,
-  getAllData
+  removeRecentWorkspace
 } = require("./../main/dataStore");
 const { setMainWindow } = require("./../main/windowMain");
 require("./../main/terminal");
@@ -49,6 +49,10 @@ ipcMain.handle('workspace:get-current', async () => {
 
 ipcMain.handle('workspace:get-recent', async () => {
   return getRecentWorkspaces();
+});
+
+ipcMain.handle('workspace:remove-recent', async (event, path) => {
+  return removeRecentWorkspace(path);
 });
 
 ipcMain.handle('workspace:close', async (event) => {

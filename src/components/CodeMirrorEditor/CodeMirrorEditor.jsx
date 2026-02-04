@@ -1,144 +1,90 @@
 import 'xterm/css/xterm.css';
+import { EditorState, Compartment } from '@codemirror/state';
+import { EditorView, keymap, lineNumbers, highlightActiveLineGutter, highlightSpecialChars, drawSelection, dropCursor, rectangularSelection, crosshairCursor, highlightActiveLine } from '@codemirror/view';
+import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
+import { bracketMatching, foldGutter, foldKeymap, indentOnInput } from '@codemirror/language';
+import { searchKeymap, highlightSelectionMatches } from '@codemirror/search';
+import { autocompletion, completionKeymap, closeBrackets, closeBracketsKeymap } from '@codemirror/autocomplete';
+import { lintKeymap } from '@codemirror/lint';
 import { useEffect, useRef } from 'react';
 import "./CodeMirror.scss"
-/* Core */
-import {
-    EditorState,
-    Compartment
-} from '@codemirror/state';
+import { githubLight } from '@fsegurai/codemirror-theme-github-light';
 
-import {
-    EditorView,
-    keymap,
-    lineNumbers,
-    highlightActiveLineGutter,
-    highlightSpecialChars,
-    drawSelection,
-    dropCursor,
-    rectangularSelection,
-    crosshairCursor,
-    highlightActiveLine
-} from '@codemirror/view';
-
-/* Theme */
-import { githubLight } from '@fsegurai/codemirror-theme-github-light'; // Updated import
-
-/* Commands */
-import {
-    defaultKeymap,
-    history,
-    historyKeymap
-} from '@codemirror/commands';
-
-/* Language helpers */
-import {
-    bracketMatching,
-    foldGutter,
-    foldKeymap,
-    indentOnInput
-} from '@codemirror/language';
-
-/* Search */
-import {
-    searchKeymap,
-    highlightSelectionMatches
-} from '@codemirror/search';
-
-/* Autocomplete */
-import {
-    autocompletion,
-    completionKeymap,
-    closeBrackets,
-    closeBracketsKeymap
-} from '@codemirror/autocomplete';
-
-import { lintKeymap } from '@codemirror/lint';
-
-/* Languages */
-import { javascript } from '@codemirror/lang-javascript';
-import { html } from '@codemirror/lang-html';
-import { css } from '@codemirror/lang-css';
-import { php } from '@codemirror/lang-php';
-import { json } from '@codemirror/lang-json';
-import { python } from '@codemirror/lang-python';
-import { java } from '@codemirror/lang-java';
 import { cpp } from '@codemirror/lang-cpp';
-import { rust } from '@codemirror/lang-rust';
+import { css } from '@codemirror/lang-css';
 import { go } from '@codemirror/lang-go';
+import { html } from '@codemirror/lang-html';
+import { java } from '@codemirror/lang-java';
+import { javascript } from '@codemirror/lang-javascript';
+import { json } from '@codemirror/lang-json';
+import { markdown } from '@codemirror/lang-markdown';
+import { php } from '@codemirror/lang-php';
+import { python } from '@codemirror/lang-python';
+import { rust } from '@codemirror/lang-rust';
 import { sql } from '@codemirror/lang-sql';
 import { xml } from '@codemirror/lang-xml';
-import { markdown } from '@codemirror/lang-markdown';
 import { yaml } from '@codemirror/lang-yaml';
 
-/* ---------- Compartments ---------- */
+
 const languageCompartment = new Compartment();
 
-/* ---------- Language Resolver ---------- */
-const getLanguageExtension = (fileName = '') => {
-    const ext = fileName.split('.').pop().toLowerCase();
+const getLanguageExtension = (fileName) => {
+    if (!fileName) return [];
 
-    switch (ext) {
-        case 'js':
-        case 'jsx':
-        case 'ts':
-        case 'tsx':
-            return javascript({ jsx: true, typescript: true });
+    const extension = fileName.split('.').pop().toLowerCase();
 
-        case 'html':
-        case 'htm':
-            return html();
-
+    switch (extension) {
+        case 'c':
+        case 'cpp':
+        case 'h':
+        case 'cc':
+            return cpp();
         case 'css':
         case 'scss':
         case 'less':
             return css();
-
-        case 'php':
-            return php({ baseLanguage: html() });
-
-        case 'json':
-            return json();
-
-        case 'py':
-            return python();
-
-        case 'java':
-            return java();
-
-        case 'c':
-        case 'cpp':
-        case 'h':
-        case 'hpp':
-            return cpp();
-
-        case 'rs':
-            return rust();
-
         case 'go':
             return go();
-
+        case 'html':
+        case 'htm':
+            return html();
+        case 'java':
+            return java();
+        case 'js':
+        case 'jsx':
+        case 'mjs':
+        case 'cjs':
+            return javascript({ jsx: true });
+        case 'ts':
+        case 'tsx':
+            return javascript({ typescript: true, jsx: true });
+        case 'json':
+            return json();
+        case 'md':
+        case 'markdown':
+            return markdown();
+        case 'php':
+            return php();
+        case 'py':
+            return python();
+        case 'rs':
+            return rust();
         case 'sql':
             return sql();
-
         case 'xml':
+        case 'svg':
             return xml();
-
-        case 'md':
-            return markdown();
-
-        case 'yml':
         case 'yaml':
+        case 'yml':
             return yaml();
-
         default:
-            return javascript();
+            return [];
     }
 };
 
-/* ---------- Editor Component ---------- */
 const CodeMirrorEditor = ({ fileData, fileName, codeChange }) => {
-    const editorRef = useRef(null);
-    const viewRef = useRef(null);
+    const editorRef = useRef();
+    const viewRef = useRef();
 
     useEffect(() => {
         const state = EditorState.create({
@@ -146,7 +92,7 @@ const CodeMirrorEditor = ({ fileData, fileName, codeChange }) => {
             extensions: [
                 // Add the GitHub light theme here
                 githubLight,
-                
+
                 lineNumbers(),
                 highlightActiveLineGutter(),
                 highlightSpecialChars(),

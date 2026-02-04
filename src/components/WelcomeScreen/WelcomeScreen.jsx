@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
-import { FolderOpen, Terminal, Folder } from '@mui/icons-material';
+import { Box, Typography, Button, List, ListItem, ListItemButton, ListItemIcon, ListItemText, IconButton, Tooltip } from '@mui/material';
+import { FolderOpen, Terminal, Folder, Close } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
 import { editorAction } from '../../store/editorSlice';
 import styles from './WelcomeScreen.module.scss';
@@ -14,8 +14,8 @@ const WelcomeScreen = () => {
     const fetchRecentWorkspaces = async () => {
       try {
         const workspaces = await window.main.ipcRenderer.invoke('workspace:get-recent');
-        // Only show last 3
-        setRecentWorkspaces(workspaces.slice(0, 3));
+        // Show all recent workspaces (scrolling handled by CSS)
+        setRecentWorkspaces(workspaces);
       } catch (error) {
         console.error('Error fetching recent workspaces:', error);
       }
@@ -46,6 +46,16 @@ const WelcomeScreen = () => {
 
   const handleOpenRecentWorkspace = (workspacePath) => {
     window.main.ipcRenderer.send('open-folder-dialog', workspacePath);
+  };
+
+  const handleRemoveRecentWorkspace = async (e, workspacePath) => {
+    e.stopPropagation(); // Prevent opening the workspace
+    try {
+      const updatedWorkspaces = await window.main.ipcRenderer.invoke('workspace:remove-recent', workspacePath);
+      setRecentWorkspaces(updatedWorkspaces);
+    } catch (error) {
+      console.error('Error removing recent workspace:', error);
+    }
   };
 
   const isMac = window.main.os.platform === 'darwin';
@@ -102,6 +112,15 @@ const WelcomeScreen = () => {
                       secondaryTypographyProps={{ className: styles.workspacePath }}
                     />
                   </ListItemButton>
+                  <Tooltip title="Remove from recent">
+                    <IconButton
+                      className={styles.deleteButton}
+                      onClick={(e) => handleRemoveRecentWorkspace(e, workspace)}
+                      size="small"
+                    >
+                      <Close fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
                 </ListItem>
               ))}
             </List>

@@ -39,11 +39,15 @@ const editorSlice = createSlice({
         activeKey: null,
         isFolderOpen: false,
         loading: false,
-        error: null
+        error: null,
+        rootDirectoryName: ""
     },
     reducers: {
         setTreeData: (state, action) => {
             state.treeData = action.payload;
+        },
+        setRootDirectoryName: (state, action) => {
+            state.rootDirectoryName = action.payload;
         },
         updateTreeChildren: (state, action) => {
             const { parentId, children } = action.payload;
@@ -96,6 +100,7 @@ const editorSlice = createSlice({
             state.filesTabList = [];
             state.activeKey = null;
             state.isFolderOpen = false;
+            state.rootDirectoryName = "";
         }
     },
     extraReducers: (builder) => {

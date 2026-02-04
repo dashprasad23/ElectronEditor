@@ -57,6 +57,13 @@ const getRecentWorkspaces = () => {
     return store.get('workspace.recentPaths') || [];
 }
 
+const removeRecentWorkspace = (path) => {
+    let recent = store.get('workspace.recentPaths') || [];
+    recent = recent.filter(p => p !== path);
+    store.set('workspace.recentPaths', recent);
+    return recent;
+}
+
 // Recent files methods
 const addRecentFile = (filePath) => {
     let recent = store.get('recentFiles') || [];
@@ -101,6 +108,7 @@ module.exports = {
     clearCurrentWorkspace,
     addRecentWorkspace,
     getRecentWorkspaces,
+    removeRecentWorkspace,
 
     // Recent files
     addRecentFile,

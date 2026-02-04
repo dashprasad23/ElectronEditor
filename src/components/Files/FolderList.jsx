@@ -14,6 +14,7 @@ import {
 import { readFileData } from "../../store/editorSlice";
 import FileIcon from "../FileIcon/FileIcon";
 import style from "./FolderList.module.scss"
+import FolderNav from "./FolderNavBar/FoderNav";
 
 const FolderList = () => {
   const dispatch = useDispatch();
@@ -194,64 +195,68 @@ const FolderList = () => {
   );
 
   return (
-    <Box sx={{ height: '100%', width: '100%' }}>
-      <SimpleTreeView
-        aria-label="file system navigator"
-        slots={{
-          collapseIcon: ExpandMore,
-          expandIcon: ChevronRight,
-        }}
-        expandedItems={expandedItems}
-        onExpandedItemsChange={handleExpandedItemsChange}
-        onItemClick={handleSelect}
-        expansionTrigger="iconContainer"
-        sx={{ flexGrow: 1, maxWidth: '100%', overflowY: 'auto' }}
-      >
-        {treeData.map((node) => renderTree(node))}
-      </SimpleTreeView>
+    <>
+      <FolderNav />
+      <Box className={style.folderList}>
+        <SimpleTreeView
+          aria-label="file system navigator"
+          slots={{
+            collapseIcon: ExpandMore,
+            expandIcon: ChevronRight,
+          }}
+          expandedItems={expandedItems}
+          onExpandedItemsChange={handleExpandedItemsChange}
+          onItemClick={handleSelect}
+          expansionTrigger="iconContainer"
+          sx={{ flexGrow: 1, maxWidth: '100%', overflowY: 'auto' }}
+        >
+          {treeData.map((node) => renderTree(node))}
+        </SimpleTreeView>
 
-      <Menu
-        open={contextMenu !== null}
-        onClose={handleClose}
-        anchorReference="anchorPosition"
-        anchorPosition={
-          contextMenu !== null
-            ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
-            : undefined
-        }
-      >
-        {!selectedNode?.isLeaf && <MenuItem onClick={() => handleAction('createFile')}><NoteAdd sx={{ mr: 1, fontSize: 18 }} /> New File</MenuItem>}
-        {!selectedNode?.isLeaf && <MenuItem onClick={() => handleAction('createFolder')}><CreateNewFolder sx={{ mr: 1, fontSize: 18 }} /> New Folder</MenuItem>}
-        <MenuItem onClick={() => handleAction('rename')}><Edit sx={{ mr: 1, fontSize: 18 }} /> Rename</MenuItem>
-        <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}><Delete sx={{ mr: 1, fontSize: 18 }} /> Delete</MenuItem>
-      </Menu>
+        <Menu
+          open={contextMenu !== null}
+          onClose={handleClose}
+          anchorReference="anchorPosition"
+          anchorPosition={
+            contextMenu !== null
+              ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+              : undefined
+          }
+        >
+          {!selectedNode?.isLeaf && <MenuItem onClick={() => handleAction('createFile')}><NoteAdd sx={{ mr: 1, fontSize: 18 }} /> New File</MenuItem>}
+          {!selectedNode?.isLeaf && <MenuItem onClick={() => handleAction('createFolder')}><CreateNewFolder sx={{ mr: 1, fontSize: 18 }} /> New Folder</MenuItem>}
+          <MenuItem onClick={() => handleAction('rename')}><Edit sx={{ mr: 1, fontSize: 18 }} /> Rename</MenuItem>
+          <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}><Delete sx={{ mr: 1, fontSize: 18 }} /> Delete</MenuItem>
+        </Menu>
 
-      <Modal
-        open={modalVisible}
-        onClose={() => setModalVisible(false)}
-        aria-labelledby="modal-modal-title"
-      >
-        <Box className={style.actionModel}>
-          <Typography id="modal-modal-title" variant="h6" component="h5" gutterBottom>
-            {modalType === 'createFile' ? "New File" : modalType === 'createFolder' ? "New Folder" : "Rename"}
-          </Typography>
-          <TextField
-            autoFocus
-            fullWidth
-            variant="outlined"
-            size="small"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleModalSubmit()}
-            sx={{ mb: 3 }}
-          />
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-            <Button onClick={() => setModalVisible(false)} variant="text" size="small">Cancel</Button>
-            <Button onClick={handleModalSubmit} variant="contained" size="small">Confirm</Button>
+        <Modal
+          open={modalVisible}
+          onClose={() => setModalVisible(false)}
+          aria-labelledby="modal-modal-title"
+        >
+          <Box className={style.actionModel}>
+            <Typography id="modal-modal-title" variant="h6" component="h5" gutterBottom>
+              {modalType === 'createFile' ? "New File" : modalType === 'createFolder' ? "New Folder" : "Rename"}
+            </Typography>
+            <TextField
+              autoFocus
+              fullWidth
+              variant="outlined"
+              size="small"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleModalSubmit()}
+              sx={{ mb: 3 }}
+            />
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+              <Button onClick={() => setModalVisible(false)} variant="text" size="small">Cancel</Button>
+              <Button onClick={handleModalSubmit} variant="contained" size="small">Confirm</Button>
+            </Box>
           </Box>
-        </Box>
-      </Modal>
-    </Box>
+        </Modal>
+      </Box>
+    </>
+
   );
 };
 
