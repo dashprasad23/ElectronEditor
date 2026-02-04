@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "main": "dist-electron/main.js",
-  "author": "Your Name",
+  "author": {
+    "name": "Debiprasad Dash",
+    "email": "debiprasad.dash@icloud.com"
+  },
   "description": "Modern, lightweight, and extensible code editor",
   "homepage": "./",
   "dependencies": {
