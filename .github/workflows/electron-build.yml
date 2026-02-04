@@ -32,6 +32,8 @@ jobs:
         run: npm ci
 
       - name: Build Electron app (macOS)
+        env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run dist:mac
 
       - name: Upload macOS artifacts
@@ -68,6 +70,8 @@ jobs:
         run: npm ci
 
       - name: Build Electron app (Windows)
+        env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run dist:win
 
       - name: Upload Windows artifacts
@@ -104,6 +108,8 @@ jobs:
         run: npm ci
 
       - name: Build Electron app (Linux)
+        env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run dist:linux
 
       - name: Upload Linux artifacts
