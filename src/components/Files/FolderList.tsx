@@ -15,6 +15,7 @@ import { readFileData } from "../../store/editorSlice";
 import FileIcon from "../FileIcon/FileIcon";
 import style from "./FolderList.module.scss"
 import FolderNav from "./FolderNavBar/FolderNav";
+import FileOpsModel from "./FileOpsModel/FileOpsModel";
 
 const FolderList: React.FC = () => {
   const dispatch = useDispatch();
@@ -27,7 +28,7 @@ const FolderList: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalType, setModalType] = useState(""); // 'createFile', 'createFolder', 'rename'
   const [inputValue, setInputValue] = useState("");
-
+  console.log(selectedNode);
 
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
@@ -86,6 +87,7 @@ const FolderList: React.FC = () => {
   const handleSelect = (event: SyntheticEvent, nodeId: string) => {
     const node = findNode(treeData, nodeId);
     if (!node) return;
+    setSelectedNode(node);
 
     if (node.isLeaf) {
       const selectedFileData = {
@@ -148,23 +150,7 @@ const FolderList: React.FC = () => {
     }
   };
 
-  const handleModalSubmit = () => {
-    if (!inputValue) return;
 
-    if (modalType === "createFile") {
-      window.main.ipcRenderer.send("createFile", { parentPath: selectedNode.path, name: inputValue });
-    } else if (modalType === "createFolder") {
-      window.main.ipcRenderer.send("createFolder", { parentPath: selectedNode.path, name: inputValue });
-    } else if (modalType === "rename") {
-      const separator = selectedNode.path.includes("\\") ? "\\" : "/";
-      const parentDir = selectedNode.path.substring(0, selectedNode.path.lastIndexOf(separator));
-      const newPath = parentDir + separator + inputValue;
-      window.main.ipcRenderer.send("renamePath", { oldPath: selectedNode.path, newPath: newPath });
-    }
-
-    setModalVisible(false);
-    setInputValue("");
-  };
 
   const renderTree = (nodes: any) => (
     <TreeItem
@@ -196,7 +182,7 @@ const FolderList: React.FC = () => {
 
   return (
     <>
-      <FolderNav />
+      <FolderNav selectedNode={selectedNode} />
       <Box className={style.folderList}>
         <SimpleTreeView
           aria-label="file system navigator"
@@ -229,31 +215,13 @@ const FolderList: React.FC = () => {
           <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}><Delete sx={{ mr: 1, fontSize: 18 }} /> Delete</MenuItem>
         </Menu>
 
-        <Modal
-          open={modalVisible}
-          onClose={() => setModalVisible(false)}
-          aria-labelledby="modal-modal-title"
-        >
-          <Box className={style.actionModel}>
-            <Typography id="modal-modal-title" variant="h6" component="h5" gutterBottom>
-              {modalType === 'createFile' ? "New File" : modalType === 'createFolder' ? "New Folder" : "Rename"}
-            </Typography>
-            <TextField
-              autoFocus
-              fullWidth
-              variant="outlined"
-              size="small"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleModalSubmit()}
-              sx={{ mb: 3 }}
-            />
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-              <Button onClick={() => setModalVisible(false)} variant="text" size="small">Cancel</Button>
-              <Button onClick={handleModalSubmit} variant="contained" size="small">Confirm</Button>
-            </Box>
-          </Box>
-        </Modal>
+        <FileOpsModel 
+          modalVisible={modalVisible}
+          setModalVisible={(data) => { setModalVisible(data) }}
+          modalType={modalType} 
+          selectedNode={selectedNode} 
+          inputValue={inputValue}
+          setInputValue={setInputValue} />
       </Box>
     </>
 
