@@ -13,7 +13,6 @@ import { AppDispatch } from "./store";
 
 const App: React.FC = () => {
   const [showTerminal, setTerminalStatus] = useState(false);
-  const [collapsed] = useState(false);
   const [terminalCount, setTerminalCount] = useState(0)
   const isFolderOpen = useSelector((state: any) => state.editor.isFolderOpen);
   const dispatch = useDispatch<AppDispatch>();
