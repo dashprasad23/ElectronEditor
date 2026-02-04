@@ -92,6 +92,12 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({ fileData, fileName,
     const editorRef = useRef<HTMLDivElement>(null);
     const viewRef = useRef<EditorView | null>(null);
 
+    const codeChangeRef = useRef(codeChange);
+
+    useEffect(() => {
+        codeChangeRef.current = codeChange;
+    }, [codeChange]);
+
     useEffect(() => {
         if (!editorRef.current) return;
 
@@ -134,7 +140,7 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({ fileData, fileName,
 
                 EditorView.updateListener.of((update) => {
                     if (update.docChanged) {
-                        codeChange(update.state.doc.toString());
+                        codeChangeRef.current(update.state.doc.toString());
                     }
                 })
             ]
@@ -147,6 +153,7 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({ fileData, fileName,
 
         viewRef.current = view;
         return () => view.destroy();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     /* Update content */

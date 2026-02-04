@@ -7,7 +7,7 @@ interface TerminalContainerProps {
   terminalCount?: number;
 }
 
-const TerminalContainer: React.FC<TerminalContainerProps> = ({  }) => {
+const TerminalContainer: React.FC<TerminalContainerProps> = () => {
   const [terminals, setTerminals] = useState([{ id: '1', key: '1' }]);
   const [activeKey, setActiveKey] = useState('1');
 
