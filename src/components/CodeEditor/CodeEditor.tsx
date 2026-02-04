@@ -1,8 +1,8 @@
-import React from "react";
+import React, { SyntheticEvent } from "react";
 import Editor from "../CodeMirrorEditor/CodeMirrorEditor";
 import { useDispatch, useSelector } from "react-redux";
 import { Tabs, Tab, Box, IconButton, Typography } from "@mui/material";
-import { Close, Description, FolderOpen } from "@mui/icons-material";
+import { Close, Description } from "@mui/icons-material";
 import { editorAction } from "../../store/editorSlice";
 import FileIcon from "../FileIcon/FileIcon";
 
@@ -60,20 +60,20 @@ const EmptyEditorState = () => {
   );
 };
 
-export const CodeEditor = (props) => {
+export const CodeEditor: React.FC = (props) => {
   const dispatch = useDispatch();
-  const editorData = useSelector((state) => state.editor);
+  const editorData = useSelector((state: any) => state.editor);
 
-  const onChange = (event, newValue) => {
+  const onChange = (event: SyntheticEvent, newValue: string) => {
     dispatch(editorAction.setActiveKey(newValue));
   };
 
-  const handleCloseTab = (event, key) => {
+  const handleCloseTab = (event: React.MouseEvent, key: string) => {
     event.stopPropagation();
     dispatch(editorAction.deleteCodeFile(key));
   };
 
-  const onEditorChange = (value) => {
+  const onEditorChange = (value: string) => {
     dispatch(editorAction.editFile({ code: value }));
   };
 
@@ -89,7 +89,7 @@ export const CodeEditor = (props) => {
               scrollButtons="auto"
               sx={{ minHeight: 32 }}
             >
-              {editorData.filesTabList.map((tab) => (
+              {editorData.filesTabList.map((tab: any) => (
                 <Tab
                   key={tab.key}
                   value={tab.key}
@@ -119,7 +119,7 @@ export const CodeEditor = (props) => {
             </Tabs>
           </Box>
           <Box sx={{ flexGrow: 1, overflow: 'hidden' }}>
-            {editorData.filesTabList.map((tab, index) => (
+            {editorData.filesTabList.map((tab: any, index: number) => (
               <Box
                 key={tab.key}
                 role="tabpanel"
@@ -130,7 +130,7 @@ export const CodeEditor = (props) => {
                   <Editor
                     fileData={tab.fileText}
                     fileName={tab.title}
-                    codeChange={(value) => onEditorChange(value)}
+                    codeChange={(value: any) => onEditorChange(value)}
                   />
                 )}
               </Box>

@@ -1,10 +1,10 @@
-const { Menu, ipcMain, app } = require("electron");
-const { openFileModel } = require("./filesystem");
-const { openTerminal, closeTerminal } = require('./terminal');
-const { getMainWindow } = require("./windowMain");
+import { Menu, ipcMain, app, MenuItem, BrowserWindow } from "electron";
+import { openFileModel } from "./filesystem";
+import { openTerminal, closeTerminal } from './terminal';
+import { getMainWindow } from "./windowMain";
 
 ipcMain.on('fileSelected', (event, data) => {
-  const editMenu = Menu.getApplicationMenu().getMenuItemById('edit-menu');
+  const editMenu = Menu.getApplicationMenu()?.getMenuItemById('edit-menu');
   if (editMenu) {
     // Note: In some versions of Electron, you can't easily enable/disable top-level items dynamically without rebuilding the menu
     // But we can enable/disable sub-items.
@@ -13,7 +13,7 @@ ipcMain.on('fileSelected', (event, data) => {
 
 const isMac = process.platform === 'darwin';
 
-const template = [
+const template: Electron.MenuItemConstructorOptions[] = [
   ...(isMac ? [{
     label: "ElectronEditor",
     submenu: [
@@ -27,7 +27,7 @@ const template = [
       { type: 'separator' },
       { role: 'quit' }
     ]
-  }] : []),
+  } as Electron.MenuItemConstructorOptions] : []),
   {
     label: "File",
     submenu: [
@@ -115,11 +115,11 @@ const template = [
             { role: 'stopSpeaking' }
           ]
         }
-      ] : [
+      ] as Electron.MenuItemConstructorOptions[] : [
         { role: 'delete' },
         { type: 'separator' },
         { role: 'selectAll' }
-      ])
+      ] as Electron.MenuItemConstructorOptions[])
     ],
   },
   {
@@ -164,15 +164,11 @@ const template = [
         { role: 'front' },
         { type: 'separator' },
         { role: 'window' }
-      ] : [
+      ] as Electron.MenuItemConstructorOptions[] : [
         { role: 'close' }
-      ])
+      ] as Electron.MenuItemConstructorOptions[])
     ]
   },
 ];
 
-let menu = Menu.buildFromTemplate(template);
-
-module.exports = {
-  menu,
-};
+export const menu = Menu.buildFromTemplate(template);

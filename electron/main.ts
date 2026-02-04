@@ -1,10 +1,11 @@
-const path = require('path');
-const { ipcMain } = require('electron');
-const { app, BrowserWindow, Menu } = require('electron');
-const isDev = require('electron-is-dev');
-require("dotenv").config();
-const { menu } = require("./../main/Menu");
-const {
+import path from 'path';
+import { app, BrowserWindow, Menu, ipcMain, IpcMainEvent } from 'electron';
+import isDev from 'electron-is-dev';
+import dotenv from 'dotenv';
+dotenv.config();
+
+import { menu } from "./Menu";
+import {
   saveData,
   getData,
   deleteData,
@@ -16,11 +17,12 @@ const {
   getRecentFiles,
   setEditorSetting,
   getEditorSetting,
-  removeRecentWorkspace
-} = require("./../main/dataStore");
-const { setMainWindow } = require("./../main/windowMain");
-require("./../main/terminal");
-require("./../main/filesystem");
+  removeRecentWorkspace,
+  getAllData
+} from "./dataStore";
+import { setMainWindow } from "./windowMain";
+import "./terminal";
+import "./filesystem";
 
 // Generic storage handlers
 ipcMain.handle('store:set', async (event, { key, value }) => {
@@ -114,6 +116,10 @@ ipcMain.handle('save-file', async (event, { path, content }) => {
 });
 
 function createWindow() {
+  const iconPath = isDev
+    ? path.join(__dirname, '../public/AppIcons/rounded_app_icon.png')
+    : path.join(__dirname, '../build/AppIcons/rounded_app_icon.png');
+
   // Create the browser window.
   const win = new BrowserWindow({
     width: 950,
@@ -125,15 +131,16 @@ function createWindow() {
   });
   setMainWindow(win);
   if (process.platform === 'darwin') {
-    app.dock.setIcon(path.join(__dirname, 'AppIcons/rounded_app_icon.png'));
+    app.dock?.setIcon(iconPath);
   }
-  win.setIcon(path.join(__dirname, 'AppIcons/rounded_app_icon.png'));
+  win.setIcon(iconPath);
 
   // and load the index.html of the app.
   // win.loadFile("index.html");
 
 
   Menu.setApplicationMenu(menu);
+
   win.loadURL(
     isDev
       ? 'http://localhost:3000'

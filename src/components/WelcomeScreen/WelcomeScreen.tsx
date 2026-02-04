@@ -5,8 +5,8 @@ import { useDispatch } from 'react-redux';
 import { editorAction } from '../../store/editorSlice';
 import styles from './WelcomeScreen.module.scss';
 
-const WelcomeScreen = () => {
-  const [recentWorkspaces, setRecentWorkspaces] = useState([]);
+const WelcomeScreen: React.FC = () => {
+  const [recentWorkspaces, setRecentWorkspaces] = useState<string[]>([]);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -37,18 +37,18 @@ const WelcomeScreen = () => {
   }, [dispatch]);
 
   const handleOpenFolder = () => {
-    window.main.ipcRenderer.send('open-folder-dialog');
+    window.main.ipcRenderer.send('open-folder-dialog', null);
   };
 
   const handleNewTerminal = () => {
-    window.main.ipcRenderer.send('trigger-new-terminal');
+    window.main.ipcRenderer.send('trigger-new-terminal', null);
   };
 
-  const handleOpenRecentWorkspace = (workspacePath) => {
+  const handleOpenRecentWorkspace = (workspacePath: string) => {
     window.main.ipcRenderer.send('open-folder-dialog', workspacePath);
   };
 
-  const handleRemoveRecentWorkspace = async (e, workspacePath) => {
+  const handleRemoveRecentWorkspace = async (e: React.MouseEvent, workspacePath: string) => {
     e.stopPropagation(); // Prevent opening the workspace
     try {
       const updatedWorkspaces = await window.main.ipcRenderer.invoke('workspace:remove-recent', workspacePath);

@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, SyntheticEvent } from 'react';
 import { Box, Tabs, Tab, IconButton, Typography } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import Terminal from './Terminal';
 
-const TerminalContainer = () => {
+interface TerminalContainerProps {
+  terminalCount?: number;
+}
+
+const TerminalContainer: React.FC<TerminalContainerProps> = ({ terminalCount }) => {
   const [terminals, setTerminals] = useState([{ id: '1', key: '1' }]);
   const [activeKey, setActiveKey] = useState('1');
 
@@ -30,11 +34,11 @@ const TerminalContainer = () => {
     };
   }, []);
 
-  const handleChange = (event, newActiveKey) => {
+  const handleChange = (event: SyntheticEvent, newActiveKey: string) => {
     setActiveKey(newActiveKey);
   };
 
-  const remove = (targetKey) => {
+  const remove = (targetKey: string) => {
     let newActiveKey = activeKey;
     let lastIndex = -1;
     terminals.forEach((item, i) => {

@@ -1,12 +1,13 @@
-const os = require("os");
-const fs = require("fs");
-const path = require("path");
-const pty = require("node-pty");
-const { ipcMain } = require("electron");
-const { getMainWindow } = require("./windowMain");
-const { getCurrentWorkspace } = require("./dataStore");
+import os from 'os';
+import fs from 'fs';
+import path from 'path';
+// import pty from 'node-pty';
+const pty = require('node-pty');
+import { ipcMain, IpcMainEvent } from 'electron';
+import { getMainWindow } from './windowMain';
+import { getCurrentWorkspace } from './dataStore';
 
-const ptySessions = {};
+const ptySessions: { [key: string]: any } = {};
 
 // Use absolute shell paths (important in Electron packaged apps)
 function getShell() {
@@ -52,7 +53,7 @@ ipcMain.on("trigger-new-terminal", () => {
 });
 
 // Renderer requests a new terminal session
-ipcMain.on("term.init", (event, id) => {
+ipcMain.on("term.init", (event: IpcMainEvent, id: string) => {
   console.log(`Main Process: Initializing PTY session for ID ${id}`);
 
   try {
@@ -61,7 +62,7 @@ ipcMain.on("term.init", (event, id) => {
       cols: 80,
       rows: 30,
       cwd: process.env.HOME || process.cwd(),
-      env: { ...process.env, TERM: "xterm-256color" },
+      env: { ...process.env, TERM: "xterm-256color" } as any,
     });
 
     ptySessions[id] = ptyProcess;
@@ -72,16 +73,17 @@ ipcMain.on("term.init", (event, id) => {
       ptyProcess.write(`cd "${currentWorkSpace}"\r`);
     }
 
-    ptyProcess.on("data", (data) => {
+    (ptyProcess as any).on("data", (data: any) => {
       event.reply("term.incoming", { id, data });
     });
 
-    ptyProcess.on("error", (err) => {
+    // @ts-ignore
+    (ptyProcess as any).on("error", (err: any) => {
       console.error(`Main Process: PTY error for session ${id}:`, err);
       event.reply("term.incoming", { id, data: `\r\n[PTY ERROR] ${err?.message}\r\n` });
     });
 
-    ptyProcess.on("exit", (exitCode, signal) => {
+    (ptyProcess as any).on("exit", (exitCode: number, signal: number) => {
       console.log(
         `Main Process: PTY session ${id} exited with code ${exitCode}, signal ${signal}`
       );
@@ -89,7 +91,7 @@ ipcMain.on("term.init", (event, id) => {
     });
 
     console.log(`Main Process: PTY session ${id} spawned successfully`);
-  } catch (err) {
+  } catch (err: any) {
     console.error(`Main Process: Failed to spawn PTY session ${id}:`, err);
     event.reply("term.incoming", {
       id,
@@ -123,15 +125,13 @@ ipcMain.on("term.close", (event, id) => {
 });
 
 // Menu actions helpers
-const openTerminal = () => {
+export const openTerminal = () => {
   const win = getMainWindow();
   if (win) win.webContents.send("newTerminal", null);
   else console.error("Main Process: Cannot open terminal, no main window found");
 };
 
-const closeTerminal = () => {
+export const closeTerminal = () => {
   const win = getMainWindow();
   if (win) win.webContents.send("closeTerminal", null);
 };
-
-module.exports = { openTerminal, closeTerminal };

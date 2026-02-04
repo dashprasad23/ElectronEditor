@@ -1,11 +1,12 @@
-const { getMainWindow } = require("./windowMain");
-const fs = require("fs").promises;
-const path = require("path");
-const { dialog, ipcMain } = require("electron");
-const { setCurrentWorkspace } = require("./dataStore");
+import { getMainWindow } from "./windowMain";
+import fs from "fs";
+import path from "path";
+import { dialog, ipcMain, IpcMainEvent } from "electron";
+import { setCurrentWorkspace } from "./dataStore";
 
+const fsPromises = fs.promises;
 
-ipcMain.on("openDir", async (event, data) => {
+ipcMain.on("openDir", async (event: IpcMainEvent, data: any) => {
   let path = data.path;
   let parentId = data.parentId
   const fileData = await readDir(path, parentId);
@@ -19,9 +20,9 @@ ipcMain.on("open-folder-dialog", (event, workspacePath) => {
 ipcMain.on("createFile", async (event, data) => {
   try {
     const filePath = path.join(data.parentPath, data.name);
-    await fs.writeFile(filePath, "");
+    await fsPromises.writeFile(filePath, "");
     event.reply("operationSuccess", { type: "createFile", parentPath: data.parentPath });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Failed to create file", error);
     event.reply("operationError", { error: error.message });
   }
@@ -30,9 +31,9 @@ ipcMain.on("createFile", async (event, data) => {
 ipcMain.on("createFolder", async (event, data) => {
   try {
     const folderPath = path.join(data.parentPath, data.name);
-    await fs.mkdir(folderPath);
+    await fsPromises.mkdir(folderPath);
     event.reply("operationSuccess", { type: "createFolder", parentPath: data.parentPath });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Failed to create folder", error);
     event.reply("operationError", { error: error.message });
   }
@@ -40,10 +41,10 @@ ipcMain.on("createFolder", async (event, data) => {
 
 ipcMain.on("renamePath", async (event, data) => {
   try {
-    await fs.rename(data.oldPath, data.newPath);
+    await fsPromises.rename(data.oldPath, data.newPath);
     // Refresh parent of oldPath basically
     event.reply("operationSuccess", { type: "rename", parentPath: path.dirname(data.oldPath) });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Failed to rename", error);
     event.reply("operationError", { error: error.message });
   }
@@ -52,18 +53,18 @@ ipcMain.on("renamePath", async (event, data) => {
 ipcMain.on("deletePath", async (event, data) => {
   try {
     if (data.isDirectory) {
-      await fs.rm(data.path, { recursive: true, force: true });
+      await fsPromises.rm(data.path, { recursive: true, force: true });
     } else {
-      await fs.unlink(data.path);
+      await fsPromises.unlink(data.path);
     }
     event.reply("operationSuccess", { type: "delete", parentPath: path.dirname(data.path) });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Failed to delete", error);
     event.reply("operationError", { error: error.message });
   }
 });
 
-const openFileModel = async (workspacePath) => {
+export const openFileModel = async (workspacePath?: string) => {
   // If a workspace path is provided, use it directly
   if (workspacePath) {
     try {
@@ -71,7 +72,7 @@ const openFileModel = async (workspacePath) => {
       setCurrentWorkspace(workspacePath);
 
       const fileData = await readDir(workspacePath, null);
-      getMainWindow().webContents.send("files", { data: fileData, parentId: null });
+      getMainWindow()?.webContents.send("files", { data: fileData, parentId: null });
     } catch (error) {
       console.error('Error opening workspace:', error);
     }
@@ -89,23 +90,24 @@ const openFileModel = async (workspacePath) => {
       setCurrentWorkspace(dirPath);
 
       const fileData = await readDir(dirPath, null);
-      getMainWindow().webContents.send("files", { data: fileData, parentId: null });
+      getMainWindow()?.webContents.send("files", { data: fileData, parentId: null });
     });
 };
 
-async function readDir(dirPath, parentId) {
-  const files = await fs.readdir(dirPath);
+async function readDir(dirPath: string, parentId: string | null) {
+  const files = await fsPromises.readdir(dirPath);
   const fileData = await formatFile(files, dirPath, parentId);
   return fileData;
 }
 
-function formatFile(files, dirPath, parentId) {
+function formatFile(files: string[], dirPath: string, parentId: string | null) {
   return Promise.all(
     files.map(async (file, i) => {
       let filePath = path.resolve(dirPath, file);
-      let stats = await fs.lstat(filePath);
+      // use lstat from promises
+      let stats = await fsPromises.lstat(filePath);
 
-      const data = {
+      const data: any = {
         title: file,
         key: parentId ? `${parentId}-${i}` : `0-${i}`,
         path: filePath,
@@ -128,7 +130,3 @@ function formatFile(files, dirPath, parentId) {
     return fileData.map(({ isDirectory, ...rest }) => rest);
   });
 }
-
-module.exports = {
-  openFileModel
-};

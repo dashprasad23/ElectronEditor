@@ -3,12 +3,18 @@ import { Terminal as XTerm } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import 'xterm/css/xterm.css';
 
-const Terminal = ({ id }) => {
-    const terminalRef = useRef(null);
-    const xtermRef = useRef(null);
-    const fitAddonRef = useRef(null);
+interface TerminalProps {
+    id: string;
+}
+
+const Terminal: React.FC<TerminalProps> = ({ id }) => {
+    const terminalRef = useRef<HTMLDivElement>(null);
+    const xtermRef = useRef<XTerm | null>(null);
+    const fitAddonRef = useRef<FitAddon | null>(null);
 
     useEffect(() => {
+        if (!terminalRef.current) return;
+
         // Initialize XTerm
         const term = new XTerm({
             cursorBlink: true,
@@ -50,7 +56,7 @@ const Terminal = ({ id }) => {
         window.addEventListener('resize', handleResize);
 
         // Incoming data from Main -> XTerm
-        const handleIncoming = (event, { id: incomingId, data }) => {
+        const handleIncoming = (event: any, { id: incomingId, data }: { id: string, data: string }) => {
             if (incomingId === id) {
                 term.write(data);
             }

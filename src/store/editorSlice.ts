@@ -1,12 +1,48 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+
+interface FileNode {
+    title: string;
+    key: string;
+    path: string;
+    isLeaf?: boolean;
+    children?: FileNode[];
+    isDirectory?: boolean;
+}
+
+interface FileTab {
+    title: string;
+    key: string;
+    path: string;
+    fileText: string;
+}
+
+interface EditorState {
+    treeData: FileNode[];
+    filesTabList: FileTab[];
+    activeKey: string | null;
+    isFolderOpen: boolean;
+    loading: boolean;
+    error: string | null;
+    rootDirectoryName: string;
+}
+
+const initialState: EditorState = {
+    treeData: [],
+    filesTabList: [],
+    activeKey: null,
+    isFolderOpen: false,
+    loading: false,
+    error: null,
+    rootDirectoryName: ""
+};
 
 export const readFileData = createAsyncThunk(
     "editor/readFileData",
-    async (data, thunkAPI) => {
+    async (data: { title: string, key: string, path: string }, thunkAPI) => {
         try {
             const response = await window.main.ipcRenderer.invoke("read-file", data.path);
             return { ...data, fileText: response };
-        } catch (error) {
+        } catch (error: any) {
             return thunkAPI.rejectWithValue(error.message);
         }
     }
@@ -15,7 +51,7 @@ export const readFileData = createAsyncThunk(
 export const saveCurrentFile = createAsyncThunk(
     "editor/saveCurrentFile",
     async (_, thunkAPI) => {
-        const state = thunkAPI.getState().editor;
+        const state = (thunkAPI.getState() as any).editor as EditorState;
         const activeFile = state.filesTabList.find(f => f.key === state.activeKey);
         if (activeFile) {
             try {
@@ -24,7 +60,7 @@ export const saveCurrentFile = createAsyncThunk(
                     content: activeFile.fileText
                 });
                 return { success: true };
-            } catch (error) {
+            } catch (error: any) {
                 return thunkAPI.rejectWithValue(error.message);
             }
         }
@@ -33,25 +69,17 @@ export const saveCurrentFile = createAsyncThunk(
 
 const editorSlice = createSlice({
     name: "editor",
-    initialState: {
-        treeData: [],
-        filesTabList: [],
-        activeKey: null,
-        isFolderOpen: false,
-        loading: false,
-        error: null,
-        rootDirectoryName: ""
-    },
+    initialState,
     reducers: {
-        setTreeData: (state, action) => {
+        setTreeData: (state, action: PayloadAction<FileNode[]>) => {
             state.treeData = action.payload;
         },
-        setRootDirectoryName: (state, action) => {
+        setRootDirectoryName: (state, action: PayloadAction<string>) => {
             state.rootDirectoryName = action.payload;
         },
-        updateTreeChildren: (state, action) => {
+        updateTreeChildren: (state, action: PayloadAction<{ parentId: string, children: FileNode[] }>) => {
             const { parentId, children } = action.payload;
-            const updateChildren = (items) => {
+            const updateChildren = (items: FileNode[]): boolean => {
                 for (let item of items) {
                     if (item.path === parentId) {
                         item.children = children;
@@ -65,20 +93,20 @@ const editorSlice = createSlice({
             };
             updateChildren(state.treeData);
         },
-        setActiveKey: (state, action) => {
+        setActiveKey: (state, action: PayloadAction<string>) => {
             state.activeKey = action.payload;
         },
-        setFolderOpen: (state, action) => {
+        setFolderOpen: (state, action: PayloadAction<boolean>) => {
             state.isFolderOpen = action.payload;
         },
-        addCodeFile: (state, action) => {
+        addCodeFile: (state, action: PayloadAction<FileTab>) => {
             const exists = state.filesTabList.find(f => f.key === action.payload.key);
             if (!exists) {
                 state.filesTabList.push(action.payload);
             }
             state.activeKey = action.payload.key;
         },
-        deleteCodeFile: (state, action) => {
+        deleteCodeFile: (state, action: PayloadAction<string>) => {
             const index = state.filesTabList.findIndex(f => f.key === action.payload);
             state.filesTabList = state.filesTabList.filter(f => f.key !== action.payload);
             if (state.activeKey === action.payload) {
@@ -89,7 +117,7 @@ const editorSlice = createSlice({
                 }
             }
         },
-        editFile: (state, action) => {
+        editFile: (state, action: PayloadAction<{ code: string }>) => {
             const file = state.filesTabList.find(f => f.key === state.activeKey);
             if (file) {
                 file.fileText = action.payload.code;

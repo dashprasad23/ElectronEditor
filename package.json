@@ -2,7 +2,7 @@
   "name": "electroneditor",
   "version": "0.1.0",
   "private": true,
-  "main": "public/electron.js",
+  "main": "dist-electron/main.js",
   "author": "Your Name",
   "description": "Modern, lightweight, and extensible code editor",
   "homepage": "./",
@@ -56,11 +56,12 @@
     "xterm-addon-fit": "^0.8.0"
   },
   "scripts": {
+    "compile:electron": "tsc -p tsconfig.electron.json",
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "npm run compile:electron && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "dev": "concurrently -k \"cross-env BROWSER=none npm start\" \"npm:electron\"",
+    "dev": "concurrently -k \"cross-env BROWSER=none npm start\" \"npm:electron\" \"npm run compile:electron -- -w\"",
     "electron": "wait-on tcp:3000 && electron .",
     "postinstall": "npx electron-rebuild -f -w node-pty",
     "pack": "npm run build && electron-builder --dir",
@@ -88,22 +89,27 @@
     ]
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.2.0",
+    "@types/react": "^19.2.11",
+    "@types/react-dom": "^19.2.3",
+    "@types/react-redux": "^7.1.34",
     "concurrently": "^7.6.0",
     "electron": "^40.1.0",
     "electron-builder": "^25.1.8",
     "electron-rebuild": "^3.2.9",
     "sass": "^1.57.1",
+    "typescript": "^4.9.5",
     "wait-on": "^7.0.1"
   },
   "build": {
+    "extends": null,
     "appId": "com.electroneditor.app",
     "productName": "Electron Editor",
     "files": [
       "build/**/*",
-      "public/electron.js",
-      "public/preload.js",
+      "dist-electron/**/*",
       "public/AppIcons/**/*",
-      "main/**/*",
       "node_modules/**/*"
     ],
     "directories": {

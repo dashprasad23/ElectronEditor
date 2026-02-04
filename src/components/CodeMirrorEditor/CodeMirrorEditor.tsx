@@ -28,10 +28,10 @@ import { yaml } from '@codemirror/lang-yaml';
 
 const languageCompartment = new Compartment();
 
-const getLanguageExtension = (fileName) => {
+const getLanguageExtension = (fileName: string) => {
     if (!fileName) return [];
 
-    const extension = fileName.split('.').pop().toLowerCase();
+    const extension = fileName.split('.').pop()?.toLowerCase();
 
     switch (extension) {
         case 'c':
@@ -82,11 +82,19 @@ const getLanguageExtension = (fileName) => {
     }
 };
 
-const CodeMirrorEditor = ({ fileData, fileName, codeChange }) => {
-    const editorRef = useRef();
-    const viewRef = useRef();
+interface CodeMirrorEditorProps {
+    fileData: string;
+    fileName: string;
+    codeChange: (value: string) => void;
+}
+
+const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({ fileData, fileName, codeChange }) => {
+    const editorRef = useRef<HTMLDivElement>(null);
+    const viewRef = useRef<EditorView | null>(null);
 
     useEffect(() => {
+        if (!editorRef.current) return;
+
         const state = EditorState.create({
             doc: fileData || '',
             extensions: [

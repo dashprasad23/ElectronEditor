@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, SyntheticEvent } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { SimpleTreeView, TreeItem } from '@mui/x-tree-view';
 import { Box, Menu, MenuItem, Modal, TextField, Button, Typography } from "@mui/material";
@@ -14,14 +14,14 @@ import {
 import { readFileData } from "../../store/editorSlice";
 import FileIcon from "../FileIcon/FileIcon";
 import style from "./FolderList.module.scss"
-import FolderNav from "./FolderNavBar/FoderNav";
+import FolderNav from "./FolderNavBar/FolderNav";
 
-const FolderList = () => {
+const FolderList: React.FC = () => {
   const dispatch = useDispatch();
-  const treeData = useSelector((state) => state.editor.treeData);
+  const treeData = useSelector((state: any) => state.editor.treeData);
 
-  const [contextMenu, setContextMenu] = useState(null);
-  const [selectedNode, setSelectedNode] = useState(null);
+  const [contextMenu, setContextMenu] = useState<{ mouseX: number; mouseY: number } | null>(null);
+  const [selectedNode, setSelectedNode] = useState<any>(null);
 
   // Modal states
   const [modalVisible, setModalVisible] = useState(false);
@@ -29,14 +29,14 @@ const FolderList = () => {
   const [inputValue, setInputValue] = useState("");
 
 
-  const [expandedItems, setExpandedItems] = useState([]);
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   // Listen for operation success events to refresh the tree
   useEffect(() => {
-    const handleOperationSuccess = (event, { type, parentPath }) => {
+    const handleOperationSuccess = (event: any, { type, parentPath }: { type: string, parentPath: string }) => {
       console.log(`Operation ${type} succeeded, refreshing ${parentPath}`);
       // Find the parent node and refresh it
-      const findAndRefresh = (nodes, targetPath) => {
+      const findAndRefresh = (nodes: any[], targetPath: string): boolean => {
         for (const node of nodes) {
           if (node.path === targetPath) {
             // Refresh this directory
@@ -60,7 +60,7 @@ const FolderList = () => {
     };
   }, [treeData]);
 
-  const findNode = (nodes, id) => {
+  const findNode = (nodes: any[], id: string): any => {
     for (const node of nodes) {
       if (node.key === id) return node;
       if (node.children) {
@@ -71,7 +71,7 @@ const FolderList = () => {
     return null;
   };
 
-  const handleExpandedItemsChange = (event, itemIds) => {
+  const handleExpandedItemsChange = (event: SyntheticEvent | null, itemIds: string[]) => {
     const newlyExpanded = itemIds.find(id => !expandedItems.includes(id));
     setExpandedItems(itemIds);
 
@@ -83,7 +83,7 @@ const FolderList = () => {
     }
   };
 
-  const handleSelect = (event, nodeId) => {
+  const handleSelect = (event: SyntheticEvent, nodeId: string) => {
     const node = findNode(treeData, nodeId);
     if (!node) return;
 
@@ -98,7 +98,7 @@ const FolderList = () => {
         key: node.key,
         title: node.title,
         path: node.path,
-      }));
+      }) as any);
     } else {
       // Toggle expansion manually for the content click
       const isExpanded = expandedItems.includes(nodeId);
@@ -109,7 +109,7 @@ const FolderList = () => {
     }
   };
 
-  const handleContextMenu = (event, node) => {
+  const handleContextMenu = (event: React.MouseEvent, node: any) => {
     event.preventDefault();
     event.stopPropagation();
     setSelectedNode(node);
@@ -127,7 +127,7 @@ const FolderList = () => {
     setContextMenu(null);
   };
 
-  const handleAction = (type) => {
+  const handleAction = (type: string) => {
     handleClose();
     setModalType(type);
     if (type === 'rename') {
@@ -166,7 +166,7 @@ const FolderList = () => {
     setInputValue("");
   };
 
-  const renderTree = (nodes) => (
+  const renderTree = (nodes: any) => (
     <TreeItem
       key={nodes.key}
       itemId={nodes.key}
@@ -189,7 +189,7 @@ const FolderList = () => {
       }
     >
       {Array.isArray(nodes.children)
-        ? nodes.children.map((node) => renderTree(node))
+        ? nodes.children.map((node: any) => renderTree(node))
         : null}
     </TreeItem>
   );
@@ -210,7 +210,7 @@ const FolderList = () => {
           expansionTrigger="iconContainer"
           sx={{ flexGrow: 1, maxWidth: '100%', overflowY: 'auto' }}
         >
-          {treeData.map((node) => renderTree(node))}
+          {treeData.map((node: any) => renderTree(node))}
         </SimpleTreeView>
 
         <Menu

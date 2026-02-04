@@ -82,6 +82,7 @@ typings/
 .nuxt
 dist
 build
+dist-electron
 
 # Gatsby files
 .cache/

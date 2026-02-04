@@ -1,8 +1,8 @@
-const { exec } = require('child_process');
-const path = require('path');
+import { exec } from 'child_process';
+import path from 'path';
 
 // Helper function to run git commands
-const runGitCommand = (command, cwd) => {
+const runGitCommand = (command: string, cwd: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     exec(command, { cwd }, (error, stdout, stderr) => {
       if (error) {
@@ -20,7 +20,7 @@ const runGitCommand = (command, cwd) => {
  * @param {string} cwd - Current working directory (repo root).
  * @returns {Promise<string>} - The current branch name.
  */
-const getCurrentBranch = async (cwd) => {
+export const getCurrentBranch = async (cwd: string): Promise<string | null> => {
   try {
     return await runGitCommand('git rev-parse --abbrev-ref HEAD', cwd);
   } catch (error) {
@@ -34,7 +34,7 @@ const getCurrentBranch = async (cwd) => {
  * @param {string} cwd - Current working directory.
  * @returns {Promise<string[]>} - Array of branch names.
  */
-const getBranches = async (cwd) => {
+export const getBranches = async (cwd: string): Promise<string[]> => {
   try {
     const output = await runGitCommand('git branch --format="%(refname:short)"', cwd);
     return output.split('\n').filter(Boolean);
@@ -50,7 +50,7 @@ const getBranches = async (cwd) => {
  * @param {string} file - File to stage (absolute path or relative to cwd). Use '.' for all files.
  * @returns {Promise<void>}
  */
-const stageFile = async (cwd, file = '.') => {
+export const stageFile = async (cwd: string, file = '.'): Promise<void> => {
   try {
     // If file is absolute, make it relative to cwd or just use it directly if git accepts absolute paths (it usually does but relative is safer)
     await runGitCommand(`git add "${file}"`, cwd);
@@ -66,7 +66,7 @@ const stageFile = async (cwd, file = '.') => {
  * @param {string} message - Commit message.
  * @returns {Promise<string>} - Output of the commit command.
  */
-const commitChanges = async (cwd, message) => {
+export const commitChanges = async (cwd: string, message: string): Promise<string> => {
   try {
     // Escape quotes in message to prevent shell injection issues
     const escapedMessage = message.replace(/"/g, '\\"');
@@ -82,19 +82,11 @@ const commitChanges = async (cwd, message) => {
  * @param {string} cwd - Current working directory.
  * @returns {Promise<string>} - The status output.
  */
-const getStatus = async (cwd) => {
+export const getStatus = async (cwd: string): Promise<string> => {
   try {
     return await runGitCommand('git status --porcelain', cwd);
   } catch (error) {
     console.error('Error getting status:', error);
     return '';
   }
-};
-
-module.exports = {
-  getCurrentBranch,
-  getBranches,
-  stageFile,
-  commitChanges,
-  getStatus
 };

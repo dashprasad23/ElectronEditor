@@ -18,10 +18,16 @@ import tsxIcon from '../../assets/icon/file/tsx.png';
 import tsIcon from '../../assets/icon/file/typescript.png';
 
 
-const FileIcon = ({ fileName, size = 20, className = "" }) => {
-  const extension = fileName.split('.').pop().toLowerCase();
+interface FileIconProps {
+  fileName: string;
+  size?: number;
+  className?: string;
+}
 
-  const SvgWrapper = ({ children, viewBox = "0 0 32 32" }) => (
+const FileIcon: React.FC<FileIconProps> = ({ fileName, size = 20, className = "" }) => {
+  const extension = fileName.split('.').pop()?.toLowerCase() || '';
+
+  const SvgWrapper = ({ children, viewBox = "0 0 32 32" }: { children: React.ReactNode, viewBox?: string }) => (
     <svg
       width={size}
       height={size}
@@ -33,7 +39,7 @@ const FileIcon = ({ fileName, size = 20, className = "" }) => {
     </svg>
   );
 
-  const icons = {
+  const icons: { [key: string]: JSX.Element } = {
     // Languages
     java: <img src={javaIcon} alt="java" width={size} height={size} className={className} />,
     js: <img src={jsIcon} alt="js" width={size} height={size} className={className} />,
@@ -88,7 +94,7 @@ const FileIcon = ({ fileName, size = 20, className = "" }) => {
   };
 
   // Special mappings for common alternative extensions
-  const extensionMap = {
+  const extensionMap: { [key: string]: string } = {
     jsx: 'jsx',
     tsx: 'tsx',
     pyc: 'py',

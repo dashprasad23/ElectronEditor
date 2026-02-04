@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, SyntheticEvent } from 'react';
 import { Box, Tabs, Tab } from '@mui/material';
 import { TabList } from '../constants/SidebarTabs'
 import style from "./Sidebar.module.scss"
-const Sidebar = (props) => {
+
+const Sidebar: React.FC = () => {
   const [value, setValue] = useState(0);
 
-  const handleChange = (event, newValue) => {
+  const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
@@ -19,7 +20,7 @@ const Sidebar = (props) => {
           variant="fullWidth"
           sx={{ minHeight: 32 }}
         >
-          {TabList.map((tab, i) => (
+          {TabList.map((tab: any, i: number) => (
             <Tab
               key={i}
               icon={tab.icon}
@@ -35,7 +36,7 @@ const Sidebar = (props) => {
           ))}
         </Tabs>
       </Box>
-      <Box sx={{ flexGrow: 1}}>
+      <Box sx={{ flexGrow: 1 }}>
         {TabList[value]?.children}
       </Box>
     </Box>

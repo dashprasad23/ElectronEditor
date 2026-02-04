@@ -6,13 +6,13 @@ import styles from './Footer.module.scss';
 // Icons
 import ForkLeftIcon from '@mui/icons-material/ForkLeft'; // Git branch
 
-const Footer = () => {
-  const { filesTabList, activeKey } = useSelector((state) => state.editor);
+const Footer: React.FC = () => {
+  const { activeKey } = useSelector((state: any) => state.editor);
 
   // Determine current language from active file extension
   const getLanguage = () => {
     if (!activeKey) return 'Plain Text';
-    const ext = activeKey.split('.').pop().toLowerCase();
+    const ext = activeKey.split('.').pop()?.toLowerCase();
     switch (ext) {
       case 'js': return 'JavaScript';
       case 'jsx': return 'JavaScript React';

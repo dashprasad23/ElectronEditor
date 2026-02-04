@@ -8,17 +8,18 @@ import CodeEditor from "./components/CodeEditor/CodeEditor";
 import TerminalContainer from "./components/Terminal/TerminalContainer";
 import { editorAction, saveCurrentFile } from "./store/editorSlice";
 import Footer from "./components/Footer/Footer";
+import { AppDispatch } from "./store";
 
 
-const App = () => {
+const App: React.FC = () => {
   const [showTerminal, setTerminalStatus] = useState(false);
   const [collapsed] = useState(false);
   const [terminalCount, setTerminalCount] = useState(0)
-  const isFolderOpen = useSelector((state) => state.editor.isFolderOpen);
-  const dispatch = useDispatch();
+  const isFolderOpen = useSelector((state: any) => state.editor.isFolderOpen);
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    const handleFiles = (event, resp) => {
+    const handleFiles = (event: any, resp: any) => {
       dispatch(editorAction.clear());
       if (resp.data) {
         dispatch(editorAction.setTreeData(resp.data));
@@ -30,7 +31,7 @@ const App = () => {
       }
     };
 
-    const handleOpenDirReply = (event, resp) => {
+    const handleOpenDirReply = (event: any, resp: any) => {
       dispatch(editorAction.updateTreeChildren({
         parentId: resp.path,
         children: resp.data
@@ -73,7 +74,7 @@ const App = () => {
             {isFolderOpen ? (
               <Resize handleWidth="5px" handleColor="#1677ff">
                 <ResizeHorizon width="300px" minWidth="200px" maxWidth="500px">
-                  <Sidebar collapsed={collapsed} />
+                  <Sidebar />
                 </ResizeHorizon>
                 <ResizeHorizon minWidth="150px">
                   <Box sx={{ height: '100%', width: '100%', overflow: 'hidden' }}>
