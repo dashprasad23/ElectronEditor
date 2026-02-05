@@ -11,6 +11,8 @@ import Footer from "./components/Footer/Footer";
 import { AppDispatch } from "./store";
 import SettingsModal from "./components/Settings/SettingsModal";
 import { settingsAction } from "./store/settingsSlice";
+import SearchModal from "./components/Search/SearchModal";
+import { searchAction } from "./store/searchSlice";
 
 
 const App: React.FC = () => {
@@ -101,6 +103,10 @@ const App: React.FC = () => {
       dispatch(settingsAction.setSettingsOpen(true));
     }
 
+    const handleOpenSearch = () => {
+      dispatch(searchAction.setSearchOpen(true));
+    }
+
     const { ipcRenderer } = window.main;
     ipcRenderer.on("files", handleFiles);
     ipcRenderer.on("openDirReply", handleOpenDirReply);
@@ -108,6 +114,7 @@ const App: React.FC = () => {
     ipcRenderer.on("closeTerminal", handleCloseTerminal);
     ipcRenderer.on("SAVE", handleSave);
     ipcRenderer.on("menu:open-settings", handleOpenSettings);
+    ipcRenderer.on("menu:find", handleOpenSearch);
 
     return () => {
       ipcRenderer.removeListener("files", handleFiles);
@@ -116,6 +123,7 @@ const App: React.FC = () => {
       ipcRenderer.removeListener("closeTerminal", handleCloseTerminal);
       ipcRenderer.removeListener("SAVE", handleSave);
       ipcRenderer.removeListener("menu:open-settings", handleOpenSettings);
+      ipcRenderer.removeListener("menu:find", handleOpenSearch);
     };
   }, [dispatch]);
 
@@ -148,6 +156,7 @@ const App: React.FC = () => {
           )}
         </Resize>
         <SettingsModal />
+        <SearchModal />
       </div>
       <Footer />
     </div>

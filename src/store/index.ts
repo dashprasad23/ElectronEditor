@@ -2,12 +2,14 @@ import { configureStore } from '@reduxjs/toolkit';
 
 import editorReducer from './editorSlice';
 import settingsReducer from './settingsSlice';
+import searchReducer from './searchSlice';
 
 
 const store = configureStore({
   reducer: {
     editor: editorReducer,
-    settings: settingsReducer
+    settings: settingsReducer,
+    search: searchReducer,
   },
 });
 

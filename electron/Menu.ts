@@ -59,6 +59,19 @@ const template: Electron.MenuItemConstructorOptions[] = [
         type: "separator",
       },
       {
+        label: "Find",
+        accelerator: "CmdOrCtrl+P",
+        click: () => {
+          const win = getMainWindow();
+          if (win) {
+            win.webContents.send("menu:find");
+          }
+        }
+      },
+      {
+        type: "separator",
+      },
+      {
         label: "Open Folder",
         accelerator: "CmdOrCtrl+O",
         click: () => {

@@ -23,6 +23,7 @@ import {
 import { setMainWindow } from "./windowMain";
 import "./terminal";
 import "./filesystem";
+import "./search";
 import { getCurrentBranch } from "./version-control";
 
 // Generic storage handlers
