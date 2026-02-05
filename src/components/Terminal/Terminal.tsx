@@ -70,6 +70,7 @@ const Terminal: React.FC<TerminalProps> = ({ id }) => {
         if (xtermRef.current) {
             xtermRef.current.options.theme = currentTheme;
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [theme, isDark]); // Re-run when theme changes
 
     useEffect(() => {
@@ -132,6 +133,7 @@ const Terminal: React.FC<TerminalProps> = ({ id }) => {
             term.dispose();
             xtermRef.current = null;
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]); // Keep dependency array clean to avoid re-init
 
     return (

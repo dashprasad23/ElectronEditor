@@ -1,5 +1,5 @@
 import React, { useState, SyntheticEvent } from 'react';
-import { Box, Tabs, Tab } from '@mui/material';
+import { Tabs, Tab } from '@mui/material';
 import { TabList } from '../constants/SidebarTabs'
 import style from "./Sidebar.module.scss"
 import { useSelector } from 'react-redux';
