@@ -44,6 +44,7 @@
     "dotenv": "^16.0.3",
     "electron-is-dev": "^2.0.0",
     "electron-store": "^8.2.0",
+    "electron-updater": "^6.7.3",
     "i": "^0.3.7",
     "node-pty": "^1.1.0",
     "npm": "^9.2.0",
@@ -119,6 +120,9 @@
     "directories": {
       "buildResources": "public"
     },
+    "publish": [
+      "github"
+    ],
     "mac": {
       "category": "public.app-category.developer-tools",
       "icon": "public/AppIcons/rounded_app_icon.png",

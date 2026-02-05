@@ -1,5 +1,6 @@
 import path from 'path';
 import { app, BrowserWindow, Menu, ipcMain, IpcMainEvent, nativeTheme } from 'electron';
+import { autoUpdater } from 'electron-updater';
 import isDev from 'electron-is-dev';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -175,7 +176,10 @@ function createWindow() {
 
 
 app.whenReady().then(() => {
-  createWindow()
+  createWindow();
+  if (!isDev) {
+    autoUpdater.checkForUpdatesAndNotify();
+  }
 });
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
