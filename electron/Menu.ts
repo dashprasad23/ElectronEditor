@@ -39,6 +39,16 @@ const template: Electron.MenuItemConstructorOptions[] = [
         }
       },
       {
+        label: isMac ? "Preferences" : "Settings",
+        accelerator: "CmdOrCtrl+,",
+        click: () => {
+          const win = getMainWindow();
+          if (win) {
+            win.webContents.send("menu:open-settings");
+          }
+        }
+      },
+      {
         label: "New Folder",
         accelerator: "CmdOrCtrl+Shift+N",
         click: () => {

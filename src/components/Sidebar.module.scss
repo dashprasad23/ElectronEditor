@@ -1,8 +1,44 @@
-.Sidebar {
-    width: 100% !important;
-    max-width: none !important;
+.sidebar {
     height: 100%;
-    padding-right: 0 !important;
-    margin-right: 0 !important;
-    
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+
+    &.light {
+        background-color: #ffffff;
+        border-color: rgba(0, 0, 0, 0.12);
+        color: rgba(0, 0, 0, 0.87);
+
+        .header {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+        }
+    }
+
+    &.dark {
+        background-color: #1e1e1e;
+        border-color: rgba(255, 255, 255, 0.12);
+        color: #ffffff;
+
+        .header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        /* Override MUI Tab colors for dark mode if needed via global class or deeper selector */
+        :global(.MuiTab-root) {
+            color: rgba(255, 255, 255, 0.7);
+            &.Mui-selected {
+                color: #90caf9; /* Light blue for selected state in dark mode */
+            }
+        }
+    }
+}
+
+.header {
+    min-height: 32px;
+}
+
+.content {
+    flex-grow: 1;
+    overflow: auto;
 }

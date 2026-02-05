@@ -1,5 +1,5 @@
 import path from 'path';
-import { app, BrowserWindow, Menu, ipcMain, IpcMainEvent } from 'electron';
+import { app, BrowserWindow, Menu, ipcMain, IpcMainEvent, nativeTheme } from 'electron';
 import isDev from 'electron-is-dev';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -23,6 +23,7 @@ import {
 import { setMainWindow } from "./windowMain";
 import "./terminal";
 import "./filesystem";
+import { getCurrentBranch } from "./version-control";
 
 // Generic storage handlers
 ipcMain.handle('store:set', async (event, { key, value }) => {
@@ -37,6 +38,11 @@ ipcMain.handle('store:get', async (event, key) => {
 ipcMain.handle('store:delete', async (event, key) => {
   deleteData(key);
   return { success: true };
+});
+
+// Git handlers
+ipcMain.handle('git:get-branch', async (event, cwd) => {
+  return getCurrentBranch(cwd);
 });
 
 // Workspace handlers
@@ -113,6 +119,20 @@ ipcMain.handle('save-file', async (event, { path, content }) => {
     console.error('Error saving file:', error);
     throw error;
   }
+});
+
+// Window Theme Handler
+ipcMain.handle('window:set-theme', async (event, theme) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (win) {
+    win.setBackgroundColor(theme === 'dark' ? '#1e1e1e' : '#ffffff');
+    win.setTitleBarOverlay({
+      color: theme === 'dark' ? '#1e1e1e' : '#ffffff',
+      symbolColor: theme === 'dark' ? '#ffffff' : '#000000',
+    });
+  }
+  nativeTheme.themeSource = theme === 'dark' ? 'dark' : 'light';
+  return { success: true };
 });
 
 function createWindow() {

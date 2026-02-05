@@ -1,0 +1,168 @@
+.codeEditor {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.emptyState {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding-left: 32px;
+    padding-right: 32px;
+    gap: 24px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+
+    &.light {
+        background-color: #ffffff;
+        color: #999;
+
+        h6 {
+            color: #666;
+        }
+
+        p {
+            color: #999;
+        }
+
+        .icon {
+            color: #ddd;
+        }
+
+        .tipsBox {
+            background-color: #f8f8f8;
+            border: 1px solid #e8e8e8;
+
+            .tipTitle {
+                color: #999;
+            }
+
+            .tipItem {
+                color: #666;
+            }
+        }
+    }
+
+    &.dark {
+        background-color: #1e1e1e;
+        color: #cccccc;
+
+        h6 {
+            color: #eeeeee;
+        }
+
+        p {
+            color: #aaaaaa;
+        }
+
+        .icon {
+            color: #444444;
+        }
+
+        .tipsBox {
+            background-color: #2d2d2d;
+            border: 1px solid #333333;
+
+            .tipTitle {
+                color: #aaaaaa;
+            }
+
+            .tipItem {
+                color: #cccccc;
+            }
+        }
+    }
+}
+
+.tipsBox {
+    display: inline-block;
+    text-align: left;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.tabContainer {
+    border-bottom: 1px solid;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+
+    :global(.MuiTabs-root) {
+        min-height: 32px;
+    }
+
+    &.light {
+        background-color: #f5f5f5;
+        border-color: #e0e0e0;
+    }
+
+    &.dark {
+        background-color: #1e1e1e; // Matches sidebar/terminal
+        border-color: #333; // Subtle border relative to bg
+    }
+}
+
+.tab {
+    min-height: 32px !important;
+    padding: 0 16px !important;
+    text-transform: none !important;
+    font-size: 0.8rem !important;
+    border-right: 1px solid transparent !important;
+    transition: background-color 0.2s ease, color 0.2s ease !important;
+
+    &.light {
+        color: #666 !important;
+        border-right-color: #e0e0e0 !important;
+
+        :global(.MuiSvgIcon-root) {
+            color: #666;
+        }
+
+        &:hover {
+            background-color: #e8e8e8;
+            color: #333 !important;
+        }
+
+        &.active {
+            // Mui-selected isn't available on class directly unless passed, we'll handle active logic or rely on Mui-selected
+            background-color: #ffffff;
+            color: #1976d2 !important; // Primary blue
+
+            :global(.MuiSvgIcon-root) {
+                color: #1976d2;
+            }
+        }
+
+        // Target MUI selected state directly if we pass this class to Tab
+        &:global(.Mui-selected) {
+            background-color: #ffffff;
+            color: #1976d2 !important;
+        }
+    }
+
+    &.dark {
+        color: #999 !important;
+        border-right-color: #333 !important;
+
+        :global(.MuiSvgIcon-root) {
+            color: #999;
+        }
+
+        &:hover {
+            background-color: #2d2d2d;
+            color: #ccc !important;
+        }
+
+        &:global(.Mui-selected) {
+            background-color: #1e1e1e; // Or slightly lighter/darker to distinguish? Maybe #252526 like VS Code active tab
+            background-color: #252526;
+            color: #ffffff !important;
+            border-top: 1px solid #1677ff; // Optional top border for active tab style
+
+            :global(.MuiSvgIcon-root) {
+                color: #ffffff;
+            }
+        }
+    }
+}

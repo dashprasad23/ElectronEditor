@@ -9,6 +9,7 @@ import { lintKeymap } from '@codemirror/lint';
 import { useEffect, useRef } from 'react';
 import "./CodeMirror.scss"
 import { githubLight } from '@fsegurai/codemirror-theme-github-light';
+import { githubDark } from '@fsegurai/codemirror-theme-github-dark';
 
 import { cpp } from '@codemirror/lang-cpp';
 import { css } from '@codemirror/lang-css';
@@ -24,9 +25,12 @@ import { rust } from '@codemirror/lang-rust';
 import { sql } from '@codemirror/lang-sql';
 import { xml } from '@codemirror/lang-xml';
 import { yaml } from '@codemirror/lang-yaml';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
 
 
 const languageCompartment = new Compartment();
+const themeCompartment = new Compartment();
 
 const getLanguageExtension = (fileName: string) => {
     if (!fileName) return [];
@@ -91,6 +95,9 @@ interface CodeMirrorEditorProps {
 const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({ fileData, fileName, codeChange }) => {
     const editorRef = useRef<HTMLDivElement>(null);
     const viewRef = useRef<EditorView | null>(null);
+    const { theme } = useSelector((state: RootState) => state.settings);
+
+    const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
     const codeChangeRef = useRef(codeChange);
 
@@ -101,11 +108,33 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({ fileData, fileName,
     useEffect(() => {
         if (!editorRef.current) return;
 
+        // Custom override to match app theme #1e1e1e
+        const customDarkTheme = EditorView.theme({
+            "&": {
+                backgroundColor: "#1e1e1e !important",
+                color: "#c9d1d9"
+            },
+            ".cm-gutters": {
+                backgroundColor: "#1e1e1e !important",
+                color: "#8b949e",
+                borderRight: "1px solid #30363d"
+            },
+            ".cm-activeLine": {
+                backgroundColor: "#2b2b2b !important"
+            },
+            ".cm-activeLineGutter": {
+                backgroundColor: "#2b2b2b !important",
+                color: "#e6edf3"
+            }
+        }, { dark: true });
+
         const state = EditorState.create({
             doc: fileData || '',
             extensions: [
-                // Add the GitHub light theme here
-                githubLight,
+                themeCompartment.of([
+                    isDark ? githubDark : githubLight,
+                    isDark ? customDarkTheme : []
+                ]),
 
                 lineNumbers(),
                 highlightActiveLineGutter(),
@@ -178,6 +207,37 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({ fileData, fileName,
             )
         });
     }, [fileName]);
+
+    /* Update theme */
+    useEffect(() => {
+        if (!viewRef.current) return;
+
+        const customDarkTheme = EditorView.theme({
+            "&": {
+                backgroundColor: "#1e1e1e !important",
+                color: "#c9d1d9"
+            },
+            ".cm-gutters": {
+                backgroundColor: "#1e1e1e !important",
+                color: "#8b949e",
+                borderRight: "1px solid #30363d"
+            },
+            ".cm-activeLine": {
+                backgroundColor: "#2b2b2b !important"
+            },
+            ".cm-activeLineGutter": {
+                backgroundColor: "#2b2b2b !important",
+                color: "#e6edf3"
+            }
+        }, { dark: true });
+
+        viewRef.current.dispatch({
+            effects: themeCompartment.reconfigure([
+                isDark ? githubDark : githubLight,
+                isDark ? customDarkTheme : []
+            ])
+        });
+    }, [isDark]);
 
     return <div ref={editorRef} style={{ height: '100%', width: '100%' }} />;
 };

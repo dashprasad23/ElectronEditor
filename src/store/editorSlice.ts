@@ -24,6 +24,7 @@ interface EditorState {
     loading: boolean;
     error: string | null;
     rootDirectoryName: string;
+    currentBranch: string | null;
 }
 
 const initialState: EditorState = {
@@ -33,7 +34,8 @@ const initialState: EditorState = {
     isFolderOpen: false,
     loading: false,
     error: null,
-    rootDirectoryName: ""
+    rootDirectoryName: "",
+    currentBranch: null
 };
 
 export const readFileData = createAsyncThunk(
@@ -76,6 +78,9 @@ const editorSlice = createSlice({
         },
         setRootDirectoryName: (state, action: PayloadAction<string>) => {
             state.rootDirectoryName = action.payload;
+        },
+        setGitBranch: (state, action: PayloadAction<string | null>) => {
+            state.currentBranch = action.payload;
         },
         updateTreeChildren: (state, action: PayloadAction<{ parentId: string, children: FileNode[] }>) => {
             const { parentId, children } = action.payload;
@@ -129,6 +134,7 @@ const editorSlice = createSlice({
             state.activeKey = null;
             state.isFolderOpen = false;
             state.rootDirectoryName = "";
+            state.currentBranch = null;
         }
     },
     extraReducers: (builder) => {

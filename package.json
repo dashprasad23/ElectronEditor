@@ -28,6 +28,7 @@
     "@codemirror/legacy-modes": "^6.3.1",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@fsegurai/codemirror-theme-github-dark": "^6.2.3",
     "@fsegurai/codemirror-theme-github-light": "^6.2.3",
     "@mui/icons-material": "^7.3.7",
     "@mui/lab": "^7.0.1-beta.21",
@@ -137,6 +138,14 @@
           ]
         }
       ]
+    },
+    "dmg": {
+      "background": "public/dmg-background.png",
+      "icon": "public/AppIcons/rounded_app_icon.png",
+      "window": {
+        "width": 540,
+        "height": 380
+      }
     },
     "win": {
       "icon": "public/AppIcons/rounded_app_icon.png",

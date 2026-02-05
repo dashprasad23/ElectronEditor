@@ -2,6 +2,9 @@ import React, { useState, useEffect, SyntheticEvent } from 'react';
 import { Box, Tabs, Tab, IconButton, Typography } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import Terminal from './Terminal';
+import style from './TerminalContainer.module.scss';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
 
 interface TerminalContainerProps {
   terminalCount?: number;
@@ -10,6 +13,10 @@ interface TerminalContainerProps {
 const TerminalContainer: React.FC<TerminalContainerProps> = () => {
   const [terminals, setTerminals] = useState([{ id: '1', key: '1' }]);
   const [activeKey, setActiveKey] = useState('1');
+  const { theme } = useSelector((state: RootState) => state.settings);
+
+  const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const themeClass = isDark ? style.dark : style.light;
 
   useEffect(() => {
     const handleNewTerminal = () => {
@@ -60,20 +67,24 @@ const TerminalContainer: React.FC<TerminalContainerProps> = () => {
 
   if (terminals.length === 0) {
     return (
-      <Box sx={{ p: 3, color: 'text.secondary', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', bgcolor: '#ffffff' }}>
-        <Typography>No open terminals. Go to Terminal {"->"} New Terminal to open one. </Typography>
-      </Box>
+      <div className={`${style.container} ${themeClass}`}>
+        <div className={style.emptyState}>
+          <Typography>No open terminals. Go to Terminal {"->"} New Terminal to open one. </Typography>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: '#ffffff' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+    <div className={`${style.container} ${themeClass}`}>
+      <div className={style.header}>
         <Tabs
           value={activeKey}
           onChange={handleChange}
           variant="scrollable"
           scrollButtons="auto"
+          textColor={isDark ? "inherit" : "primary"}
+          indicatorColor={isDark ? "secondary" : "primary"}
           sx={{ minHeight: 32 }}
         >
           {terminals.map((item, i) => (
@@ -84,9 +95,7 @@ const TerminalContainer: React.FC<TerminalContainerProps> = () => {
                 minHeight: 32,
                 py: 0.5,
                 px: 2,
-                color: 'rgba(0,0,0,0.6)',
                 textTransform: 'none',
-                '&.Mui-selected': { color: '#1677ff' }
               }}
               label={
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -103,8 +112,8 @@ const TerminalContainer: React.FC<TerminalContainerProps> = () => {
             />
           ))}
         </Tabs>
-      </Box>
-      <Box sx={{ flexGrow: 1, overflow: 'hidden' }}>
+      </div>
+      <div className={style.content}>
         {terminals.map((item) => (
           <Box
             key={item.key}
@@ -115,8 +124,8 @@ const TerminalContainer: React.FC<TerminalContainerProps> = () => {
             {activeKey === item.key && <Terminal id={item.id} />}
           </Box>
         ))}
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };
 

@@ -4,8 +4,43 @@
     left: 50%;
     width: 300px;
     transform: translate(-50%, -50%);
-    background-color: white;
     padding: 20px;
     border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    outline: none; // Remove accessibility outline since it's a modal
+
+    &.light {
+        background-color: white;
+        color: black;
+    }
+
+    &.dark {
+        background-color: #1e1e1e;
+        color: #fff;
+        border: 1px solid #333;
+
+        :global(.MuiInputLabel-root) {
+            color: #aaa;
+
+            &.Mui-focused {
+                color: #90caf9;
+            }
+        }
+
+        :global(.MuiOutlinedInput-root) {
+            color: #fff;
+
+            & :global(.MuiOutlinedInput-notchedOutline) {
+                border-color: #444;
+            }
+
+            &:hover :global(.MuiOutlinedInput-notchedOutline) {
+                border-color: #666;
+            }
+
+            &.Mui-focused :global(.MuiOutlinedInput-notchedOutline) {
+                border-color: #90caf9;
+            }
+        }
+    }
 }

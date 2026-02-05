@@ -17,9 +17,14 @@ import style from "./FolderList.module.scss"
 import FolderNav from "./FolderNavBar/FolderNav";
 import FileOpsModel from "./FileOpsModel/FileOpsModel";
 
+import { RootState } from "../../store";
+
 const FolderList: React.FC = () => {
   const dispatch = useDispatch();
   const treeData = useSelector((state: any) => state.editor.treeData);
+  const { theme } = useSelector((state: RootState) => state.settings);
+
+  const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
   const [contextMenu, setContextMenu] = useState<{ mouseX: number; mouseY: number } | null>(null);
   const [selectedNode, setSelectedNode] = useState<any>(null);
@@ -208,18 +213,30 @@ const FolderList: React.FC = () => {
               ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
               : undefined
           }
+          PaperProps={{
+            sx: {
+              bgcolor: isDark ? '#1e1e1e' : 'background.paper',
+              color: isDark ? '#fff' : 'text.primary',
+              border: isDark ? '1px solid #333' : 'none',
+              '& .MuiMenuItem-root': {
+                '&:hover': {
+                  bgcolor: isDark ? '#333' : 'rgba(0, 0, 0, 0.04)'
+                }
+              }
+            }
+          }}
         >
-          {!selectedNode?.isLeaf && <MenuItem onClick={() => handleAction('createFile')}><NoteAdd sx={{ mr: 1, fontSize: 18 }} /> New File</MenuItem>}
-          {!selectedNode?.isLeaf && <MenuItem onClick={() => handleAction('createFolder')}><CreateNewFolder sx={{ mr: 1, fontSize: 18 }} /> New Folder</MenuItem>}
-          <MenuItem onClick={() => handleAction('rename')}><Edit sx={{ mr: 1, fontSize: 18 }} /> Rename</MenuItem>
+          {!selectedNode?.isLeaf && <MenuItem onClick={() => handleAction('createFile')}><NoteAdd sx={{ mr: 1, fontSize: 18, color: isDark ? '#fff' : 'inherit' }} /> New File</MenuItem>}
+          {!selectedNode?.isLeaf && <MenuItem onClick={() => handleAction('createFolder')}><CreateNewFolder sx={{ mr: 1, fontSize: 18, color: isDark ? '#fff' : 'inherit' }} /> New Folder</MenuItem>}
+          <MenuItem onClick={() => handleAction('rename')}><Edit sx={{ mr: 1, fontSize: 18, color: isDark ? '#fff' : 'inherit' }} /> Rename</MenuItem>
           <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}><Delete sx={{ mr: 1, fontSize: 18 }} /> Delete</MenuItem>
         </Menu>
 
-        <FileOpsModel 
+        <FileOpsModel
           modalVisible={modalVisible}
           setModalVisible={(data) => { setModalVisible(data) }}
-          modalType={modalType} 
-          selectedNode={selectedNode} 
+          modalType={modalType}
+          selectedNode={selectedNode}
           inputValue={inputValue}
           setInputValue={setInputValue} />
       </Box>

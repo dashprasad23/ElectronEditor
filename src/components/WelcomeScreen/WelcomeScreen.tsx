@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Button, List, ListItem, ListItemButton, ListItemIcon, ListItemText, IconButton, Tooltip } from '@mui/material';
 import { FolderOpen, Terminal, Folder, Close } from '@mui/icons-material';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { editorAction } from '../../store/editorSlice';
 import styles from './WelcomeScreen.module.scss';
 
@@ -36,6 +36,9 @@ const WelcomeScreen: React.FC = () => {
     };
   }, [dispatch]);
 
+  const { theme } = useSelector((state: any) => state.settings);
+  const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
   const handleOpenFolder = () => {
     window.main.ipcRenderer.send('open-folder-dialog', null);
   };
@@ -62,7 +65,7 @@ const WelcomeScreen: React.FC = () => {
   const modifier = isMac ? '⌘' : 'Ctrl';
 
   return (
-    <Box className={styles.welcomeContainer}>
+    <Box className={`${styles.welcomeContainer} ${isDark ? styles.dark : styles.light}`}>
       <Box className={styles.content}>
         <Typography variant="h3" className={styles.title}>
           Electron Editor

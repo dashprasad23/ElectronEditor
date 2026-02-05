@@ -7,7 +7,7 @@ import styles from './Footer.module.scss';
 import ForkLeftIcon from '@mui/icons-material/ForkLeft'; // Git branch
 
 const Footer: React.FC = () => {
-  const { activeKey } = useSelector((state: any) => state.editor);
+  const { activeKey, currentBranch } = useSelector((state: any) => state.editor);
 
   // Determine current language from active file extension
   const getLanguage = () => {
@@ -42,10 +42,12 @@ const Footer: React.FC = () => {
       {/* Left Section */}
       <div className={styles.leftSection}>
 
-        <div className={styles.item} title="Git Branch">
-          <ForkLeftIcon style={{ fontSize: 16, transform: 'rotate(90deg)' }} />
-          <span>main*</span>
-        </div>
+        {currentBranch && (
+          <div className={styles.item} title="Git Branch">
+            <ForkLeftIcon style={{ fontSize: 16, transform: 'rotate(90deg)' }} />
+            <span>{currentBranch}</span>
+          </div>
+        )}
 
         {/* <div className={styles.item} title="No Errors">
           <CancelIcon style={{ fontSize: 12 }} />

@@ -9,16 +9,54 @@ import TerminalContainer from "./components/Terminal/TerminalContainer";
 import { editorAction, saveCurrentFile } from "./store/editorSlice";
 import Footer from "./components/Footer/Footer";
 import { AppDispatch } from "./store";
+import SettingsModal from "./components/Settings/SettingsModal";
+import { settingsAction } from "./store/settingsSlice";
 
 
 const App: React.FC = () => {
   const [showTerminal, setTerminalStatus] = useState(false);
   const [terminalCount, setTerminalCount] = useState(0)
   const isFolderOpen = useSelector((state: any) => state.editor.isFolderOpen);
+  const { theme, fontSize } = useSelector((state: any) => state.settings);
   const dispatch = useDispatch<AppDispatch>();
+  const [isSettingsLoaded, setSettingsLoaded] = useState(false);
 
   useEffect(() => {
-    const handleFiles = (event: any, resp: any) => {
+    const loadSettings = async () => {
+      try {
+        const { ipcRenderer } = window.main;
+        const storedTheme = await ipcRenderer.invoke('settings:get', 'theme');
+        const storedFontSize = await ipcRenderer.invoke('settings:get', 'fontSize');
+
+        if (storedTheme || storedFontSize) {
+          dispatch(settingsAction.setSettings({
+            theme: storedTheme || 'system',
+            fontSize: storedFontSize || 14
+          }));
+        }
+        setSettingsLoaded(true);
+      } catch (error) {
+        console.error("Failed to load settings:", error);
+        setSettingsLoaded(true); // Enable saving even if load fails to avoid stuck state
+      }
+    };
+    loadSettings();
+  }, [dispatch]);
+
+  useEffect(() => {
+    // Save settings on change
+    if (!isSettingsLoaded) return;
+
+    const saveSettings = async () => {
+      const { ipcRenderer } = window.main;
+      await ipcRenderer.invoke('settings:set', { key: 'theme', value: theme });
+      await ipcRenderer.invoke('settings:set', { key: 'fontSize', value: fontSize });
+    };
+    saveSettings();
+  }, [theme, fontSize, isSettingsLoaded]);
+
+  useEffect(() => {
+    const handleFiles = async (event: any, resp: any) => {
       dispatch(editorAction.clear());
       if (resp.data) {
         dispatch(editorAction.setTreeData(resp.data));
@@ -27,6 +65,15 @@ const App: React.FC = () => {
         const separator = resp.path.includes("\\") ? "\\" : "/";
         const folderName = resp.path.split(separator).pop() || resp.path;
         dispatch(editorAction.setRootDirectoryName(folderName));
+
+        // Get git branch
+        try {
+          const branch = await window.main.ipcRenderer.invoke('git:get-branch', resp.path);
+          dispatch(editorAction.setGitBranch(branch));
+        } catch (error) {
+          console.error("Failed to get git branch:", error);
+          dispatch(editorAction.setGitBranch(null));
+        }
       }
     };
 
@@ -50,18 +97,25 @@ const App: React.FC = () => {
       dispatch(saveCurrentFile());
     };
 
-    window.main.ipcRenderer.on("files", handleFiles);
-    window.main.ipcRenderer.on("openDirReply", handleOpenDirReply);
-    window.main.ipcRenderer.on("newTerminal", handleNewTerminal);
-    window.main.ipcRenderer.on("closeTerminal", handleCloseTerminal);
-    window.main.ipcRenderer.on("SAVE", handleSave);
+    const handleOpenSettings = () => {
+      dispatch(settingsAction.setSettingsOpen(true));
+    }
+
+    const { ipcRenderer } = window.main;
+    ipcRenderer.on("files", handleFiles);
+    ipcRenderer.on("openDirReply", handleOpenDirReply);
+    ipcRenderer.on("newTerminal", handleNewTerminal);
+    ipcRenderer.on("closeTerminal", handleCloseTerminal);
+    ipcRenderer.on("SAVE", handleSave);
+    ipcRenderer.on("menu:open-settings", handleOpenSettings);
 
     return () => {
-      window.main.ipcRenderer.removeListener("files", handleFiles);
-      window.main.ipcRenderer.removeListener("openDirReply", handleOpenDirReply);
-      window.main.ipcRenderer.removeListener("newTerminal", handleNewTerminal);
-      window.main.ipcRenderer.removeListener("closeTerminal", handleCloseTerminal);
-      window.main.ipcRenderer.removeListener("SAVE", handleSave);
+      ipcRenderer.removeListener("files", handleFiles);
+      ipcRenderer.removeListener("openDirReply", handleOpenDirReply);
+      ipcRenderer.removeListener("newTerminal", handleNewTerminal);
+      ipcRenderer.removeListener("closeTerminal", handleCloseTerminal);
+      ipcRenderer.removeListener("SAVE", handleSave);
+      ipcRenderer.removeListener("menu:open-settings", handleOpenSettings);
     };
   }, [dispatch]);
 
@@ -93,6 +147,7 @@ const App: React.FC = () => {
             </ResizeVertical>
           )}
         </Resize>
+        <SettingsModal />
       </div>
       <Footer />
     </div>

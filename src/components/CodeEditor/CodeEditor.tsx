@@ -6,63 +6,56 @@ import { Close, Description } from "@mui/icons-material";
 import { editorAction } from "../../store/editorSlice";
 import FileIcon from "../FileIcon/FileIcon";
 
+import style from "./CodeEditor.module.scss";
+import { RootState } from "../../store";
+
 const EmptyEditorState = () => {
   const isMac = window.main.os.platform === 'darwin';
   const modifier = isMac ? '⌘' : 'Ctrl';
+  const { theme } = useSelector((state: RootState) => state.settings);
+
+  const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const themeClass = isDark ? style.dark : style.light;
 
   return (
-    <Box
-      sx={{
-        height: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'column',
-        color: '#999',
-        gap: 3,
-        px: 4
-      }}
-    >
-      <Description sx={{ fontSize: 64, color: '#ddd' }} />
+    <div className={`${style.emptyState} ${themeClass}`}>
+      <Description className={style.icon} sx={{ fontSize: 64 }} />
       <Box sx={{ textAlign: 'center' }}>
-        <Typography variant="h6" sx={{ color: '#666', mb: 1, fontWeight: 600 }}>
+        <Typography variant="h6" sx={{ mb: 1, fontWeight: 600 }}>
           No File Open
         </Typography>
-        <Typography variant="body2" sx={{ color: '#999', mb: 3 }}>
+        <Typography variant="body2" sx={{ mb: 3 }}>
           Select a file from the sidebar to start editing
         </Typography>
 
-        <Box sx={{
-          display: 'inline-block',
-          textAlign: 'left',
-          bgcolor: '#f8f8f8',
-          borderRadius: 2,
-          p: 2,
-          border: '1px solid #e8e8e8'
-        }}>
-          <Typography variant="caption" sx={{ color: '#999', display: 'block', mb: 1, fontWeight: 600 }}>
+        <div className={style.tipsBox}>
+          <Typography className={style.tipTitle} variant="caption" sx={{ display: 'block', mb: 1, fontWeight: 600 }}>
             Quick Tips:
           </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-            <Typography variant="caption" sx={{ color: '#666', fontSize: '0.75rem' }}>
+            <Typography className={style.tipItem} variant="caption" sx={{ fontSize: '0.75rem' }}>
               • Click any file in the sidebar to open it
             </Typography>
-            <Typography variant="caption" sx={{ color: '#666', fontSize: '0.75rem' }}>
+            <Typography className={style.tipItem} variant="caption" sx={{ fontSize: '0.75rem' }}>
               • Use {modifier}+S to save your changes
             </Typography>
-            <Typography variant="caption" sx={{ color: '#666', fontSize: '0.75rem' }}>
+            <Typography className={style.tipItem} variant="caption" sx={{ fontSize: '0.75rem' }}>
               • Use {modifier}+Shift+W to close workspace
             </Typography>
           </Box>
-        </Box>
+        </div>
       </Box>
-    </Box>
+    </div>
   );
 };
 
 export const CodeEditor: React.FC = (props) => {
   const dispatch = useDispatch();
   const editorData = useSelector((state: any) => state.editor);
+  const { theme } = useSelector((state: RootState) => state.settings);
+
+  const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const themeClass = isDark ? style.dark : style.light;
 
   const onChange = (event: SyntheticEvent, newValue: string) => {
     dispatch(editorAction.setActiveKey(newValue));
@@ -78,29 +71,29 @@ export const CodeEditor: React.FC = (props) => {
   };
 
   return (
-    <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <div className={`${style.codeEditor} ${themeClass}`}>
       {editorData.filesTabList.length > 0 ? (
         <>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: '#f5f5f5' }}>
+          <div className={`${style.tabContainer} ${themeClass}`}>
             <Tabs
               value={editorData.activeKey}
               onChange={onChange}
               variant="scrollable"
               scrollButtons="auto"
-              sx={{ minHeight: 32 }}
+              textColor="inherit"
+              indicatorColor={isDark ? "secondary" : "primary"}
+              sx={{
+                minHeight: 32,
+                '& .MuiTabs-indicator': {
+                  backgroundColor: isDark ? '#1677ff' : '#1976d2'
+                }
+              }}
             >
               {editorData.filesTabList.map((tab: any) => (
                 <Tab
                   key={tab.key}
                   value={tab.key}
-                  sx={{
-                    minHeight: 32,
-                    py: 0,
-                    px: 2,
-                    textTransform: 'none',
-                    fontSize: '0.8rem',
-                    borderRight: '1px solid #e0e0e0'
-                  }}
+                  className={`${style.tab} ${themeClass}`}
                   label={
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                       <FileIcon fileName={tab.title} size={14} />
@@ -108,7 +101,8 @@ export const CodeEditor: React.FC = (props) => {
                       <IconButton
                         size="small"
                         onClick={(e) => handleCloseTab(e, tab.key)}
-                        sx={{ p: 0.1, ml: 0.5 }}
+                        sx={{ p: 0.1, ml: 0.5, color: 'inherit' }}
+                        className="close-icon"
                       >
                         <Close sx={{ fontSize: 11 }} />
                       </IconButton>
@@ -117,7 +111,7 @@ export const CodeEditor: React.FC = (props) => {
                 />
               ))}
             </Tabs>
-          </Box>
+          </div>
           <Box sx={{ flexGrow: 1, overflow: 'hidden' }}>
             {editorData.filesTabList.map((tab: any, index: number) => (
               <Box
@@ -140,7 +134,7 @@ export const CodeEditor: React.FC = (props) => {
       ) : (
         <EmptyEditorState />
       )}
-    </Box>
+    </div>
   );
 }
 

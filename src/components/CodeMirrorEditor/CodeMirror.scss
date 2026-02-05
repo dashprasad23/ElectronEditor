@@ -2,21 +2,9 @@
 .cm-editor {
     height: 100%;
     font-size: 14px;
-    font-family: 'SF Mono', Monaco, 'Cascadia Mono', 'Segoe UI Mono', 
-                 'Roboto Mono', 'Ubuntu Mono', Menlo, Consolas, monospace;
+    font-family: 'SF Mono', Monaco, 'Cascadia Mono', 'Segoe UI Mono',
+        'Roboto Mono', 'Ubuntu Mono', Menlo, Consolas, monospace;
     line-height: 1.5;
 }
 
-.cm-editor .cm-gutters {
-    background-color: #f6f8fa;
-    color: #6e7781;
-    border-right: 1px solid #d0d7de;
-}
-
-.cm-editor .cm-activeLineGutter {
-    background-color: #eaeef2;
-}
-
-.cm-editor .cm-activeLine {
-    background-color: #f6f8fa;
-}
+/* Remove conflicting overrides to allow theme to take precedence */

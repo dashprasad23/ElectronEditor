@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { Terminal as XTerm } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import 'xterm/css/xterm.css';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
 
 interface TerminalProps {
     id: string;
@@ -11,26 +13,82 @@ const Terminal: React.FC<TerminalProps> = ({ id }) => {
     const terminalRef = useRef<HTMLDivElement>(null);
     const xtermRef = useRef<XTerm | null>(null);
     const fitAddonRef = useRef<FitAddon | null>(null);
+    const { theme } = useSelector((state: RootState) => state.settings);
+
+    // Define themes
+    const lightTheme = {
+        background: '#ffffff',
+        foreground: '#000000',
+        cursor: '#1677ff',
+        selectionBackground: 'rgba(22, 119, 255, 0.2)',
+        black: '#000000',
+        red: '#cd3131',
+        green: '#0dbc79',
+        yellow: '#e5e510',
+        blue: '#2472c8',
+        magenta: '#bc3fbc',
+        cyan: '#11a8cd',
+        white: '#e5e5e5',
+        brightBlack: '#666666',
+        brightRed: '#f14c4c',
+        brightGreen: '#23d18b',
+        brightYellow: '#f5f543',
+        brightBlue: '#3b8eea',
+        brightMagenta: '#d670d6',
+        brightCyan: '#29b8db',
+        brightWhite: '#e5e5e5',
+    };
+
+    const darkTheme = {
+        background: '#1e1e1e',
+        foreground: '#cccccc',
+        cursor: '#1677ff',
+        selectionBackground: 'rgba(22, 119, 255, 0.2)',
+        black: '#000000',
+        red: '#cd3131',
+        green: '#0dbc79',
+        yellow: '#e5e510',
+        blue: '#2472c8',
+        magenta: '#bc3fbc',
+        cyan: '#11a8cd',
+        white: '#e5e5e5',
+        brightBlack: '#666666',
+        brightRed: '#f14c4c',
+        brightGreen: '#23d18b',
+        brightYellow: '#f5f543',
+        brightBlue: '#3b8eea',
+        brightMagenta: '#d670d6',
+        brightCyan: '#29b8db',
+        brightWhite: '#e5e5e5',
+    };
+
+    const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const currentTheme = isDark ? darkTheme : lightTheme;
+
+    // Theme sync effect
+    useEffect(() => {
+        if (xtermRef.current) {
+            xtermRef.current.options.theme = currentTheme;
+        }
+    }, [theme, isDark]); // Re-run when theme changes
 
     useEffect(() => {
         if (!terminalRef.current) return;
 
-        // Initialize XTerm
+        // Initialize XTerm with current theme
         const term = new XTerm({
             cursorBlink: true,
-            theme: {
-                background: '#ffffff',
-                foreground: '#000000',
-                cursor: '#1677ff',
-                selectionBackground: '#1677ff33'
-            }
+            theme: currentTheme, // Use calculated theme on init
+            fontFamily: 'Menlo, Monaco, "Courier New", monospace',
+            fontSize: 14,
+            lineHeight: 1.2
         });
         const fitAddon = new FitAddon();
         term.loadAddon(fitAddon);
 
         term.open(terminalRef.current);
         fitAddon.fit();
-        term.focus(); // Ensure focus after opening
+        term.focus();
 
         xtermRef.current = term;
         fitAddonRef.current = fitAddon;
@@ -42,7 +100,6 @@ const Terminal: React.FC<TerminalProps> = ({ id }) => {
 
         // Input from user -> Main
         term.onData(data => {
-            console.log(`Renderer: Terminal ${id} data input length: ${data.length}`);
             window.main.ipcRenderer.send('term.input', { id, data });
         });
 
@@ -73,8 +130,9 @@ const Terminal: React.FC<TerminalProps> = ({ id }) => {
             window.main.ipcRenderer.removeListener('term.incoming', handleIncoming);
             window.removeEventListener('resize', handleResize);
             term.dispose();
+            xtermRef.current = null;
         }
-    }, [id]);
+    }, [id]); // Keep dependency array clean to avoid re-init
 
     return (
         <div
