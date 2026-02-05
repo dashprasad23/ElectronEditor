@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
     Dialog,
-    DialogTitle,
+
     DialogContent,
     TextField,
     Box,
-    useTheme as useMuiTheme,
+
     InputAdornment
 } from '@mui/material';
 import { Search } from '@mui/icons-material';
@@ -19,7 +19,7 @@ const SearchModal: React.FC = () => {
     const dispatch = useDispatch<any>(); // Type as any to work with thunks easily
     const { isSearchOpen } = useSelector((state: RootState) => state.search);
     const { theme } = useSelector((state: RootState) => state.settings);
-    const muiTheme = useMuiTheme();
+
     const [searchTerm, setSearchTerm] = useState('');
     const [allFiles, setAllFiles] = useState<{ path: string, name: string }[]>([]);
     const [filteredFiles, setFilteredFiles] = useState<{ path: string, name: string }[]>([]);
@@ -66,9 +66,9 @@ const SearchModal: React.FC = () => {
 
         const scored = allFiles.map(file => {
             const name = file.name.toLowerCase();
-            const path = file.path.toLowerCase();
+
             let score = 0;
-            let matchIndex = 0;
+
 
             // 1. exact match bonus
             if (name === query) score += 100;
