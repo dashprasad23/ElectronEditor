@@ -9,7 +9,7 @@ import { ReactComponent as BrowserIcon } from '../../assets/icon/browser.svg';
 import { ReactComponent as SidebarLeftIcon } from '../../assets/icon/sidebar-left.svg';
 import { ReactComponent as SidebarBottomIcon } from '../../assets/icon/sidebar-bottom.svg';
 
-const TitleBar: React.FC = () => {
+const TitleBar= ({toggleSidePannel, toggleBottomPanel}: {toggleSidePannel: () => void, toggleBottomPanel: () => void}) => {
     // Use "any" for state type for now as we don't have the full State type definition available here
     const theme = useSelector((state: any) => state.settings?.theme);
     const activeFile = useSelector((state: any) => state.editor?.activeFile);
@@ -55,13 +55,13 @@ const TitleBar: React.FC = () => {
                 </Tooltip>
 
                 <Tooltip title="Toggle Sidebar">
-                    <div className={`${styles.iconButton} ${isDarkMode ? styles.dark : ''}`}>
+                    <div className={`${styles.iconButton} ${isDarkMode ? styles.dark : ''}`} onClick={toggleSidePannel}>
                         <SidebarLeftIcon width={16} height={16} style={{ fill: isDarkMode ? '#cccccc' : '#333333' }} />
                     </div>
                 </Tooltip>
 
                 <Tooltip title="Toggle Panel">
-                    <div className={`${styles.iconButton} ${isDarkMode ? styles.dark : ''}`}>
+                    <div className={`${styles.iconButton} ${isDarkMode ? styles.dark : ''}`} onClick={toggleBottomPanel}>
                         <SidebarBottomIcon width={16} height={16} style={{ fill: isDarkMode ? '#cccccc' : '#333333' }} />
                     </div>
                 </Tooltip>
