@@ -27,8 +27,10 @@
         /* Override MUI Tab colors for dark mode if needed via global class or deeper selector */
         :global(.MuiTab-root) {
             color: rgba(255, 255, 255, 0.7);
+
             &.Mui-selected {
-                color: #90caf9; /* Light blue for selected state in dark mode */
+                color: #90caf9;
+                /* Light blue for selected state in dark mode */
             }
         }
     }
@@ -36,9 +38,12 @@
 
 .header {
     min-height: 32px;
+    flex-shrink: 0;
 }
 
 .content {
     flex-grow: 1;
-    overflow: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }

@@ -129,8 +129,8 @@ ipcMain.handle('window:set-theme', async (event, theme) => {
   if (win) {
     win.setBackgroundColor(theme === 'dark' ? '#1e1e1e' : '#ffffff');
     win.setTitleBarOverlay({
-      color: theme === 'dark' ? '#1e1e1e' : '#ffffff',
-      symbolColor: theme === 'dark' ? '#ffffff' : '#000000',
+      color: theme === 'dark' ? '#1e1e1e' : '#f8f8f8',
+      symbolColor: theme === 'dark' ? '#ffffff' : '#333333',
     });
   }
   nativeTheme.themeSource = theme === 'dark' ? 'dark' : 'light';
@@ -146,6 +146,12 @@ function createWindow() {
   const win = new BrowserWindow({
     width: 950,
     height: 700,
+    titleBarStyle: 'hidden',
+    titleBarOverlay: {
+      color: '#f8f8f8',
+      symbolColor: '#333333',
+      height: 38
+    },
     webPreferences: {
       nodeIntegration: true,
       preload: path.join(__dirname, 'preload.js')

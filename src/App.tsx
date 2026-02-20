@@ -15,6 +15,8 @@ import SearchModal from "./components/Search/SearchModal";
 import { searchAction } from "./store/searchSlice";
 
 
+import TitleBar from "./components/TitleBar/TitleBar";
+
 const App: React.FC = () => {
   const [showTerminal, setTerminalStatus] = useState(false);
   const [terminalCount, setTerminalCount] = useState(0)
@@ -129,11 +131,12 @@ const App: React.FC = () => {
 
   return (
     <div style={{ height: "100vh", width: "100vw", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+      <TitleBar />
       <div style={{ flex: 1, overflow: "hidden", position: 'relative' }}>
-        <Resize handleWidth="5px" handleColor="#1677ff">
+        <Resize handleWidth="5px" handleColor="#1677ff" height="100%">
           <ResizeVertical>
             {isFolderOpen ? (
-              <Resize handleWidth="5px" handleColor="#1677ff">
+              <Resize handleWidth="5px" handleColor="#1677ff" height="100%">
                 <ResizeHorizon width="300px" minWidth="200px" maxWidth="500px">
                   <Sidebar />
                 </ResizeHorizon>

@@ -11,7 +11,8 @@
 }
 
 .folderList {
-    height: 100vh;
+    flex: 1;
     width: 100%;
     overflow: auto;
+    min-height: 0;
 }
