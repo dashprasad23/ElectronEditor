@@ -1,9 +1,7 @@
 import React from 'react';
 import styles from './TitleBar.module.scss';
 import { useSelector } from 'react-redux';
-import {
-    Settings as SettingsIcon,
-} from '@mui/icons-material';
+
 import { Tooltip } from '@mui/material';
 import { ReactComponent as BrowserIcon } from '../../assets/icon/browser.svg';
 import { ReactComponent as SidebarLeftIcon } from '../../assets/icon/sidebar-left.svg';
@@ -16,10 +14,6 @@ const TitleBar= ({toggleSidePannel, toggleBottomPanel}: {toggleSidePannel: () =>
     const currentWorkspace = useSelector((state: any) => state.editor?.rootDirectoryName);
 
     const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-
-    const handleRestart = () => {
-        window.location.reload();
-    };
 
     const title = activeFile
         ? `${currentWorkspace || 'ElectronEditor'} — ${activeFile.name} (Working Tree)`
